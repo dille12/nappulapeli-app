@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -169,23 +170,33 @@ class HUDFragment : Fragment() {
             }
         }
 
-        // Avatar (small circle)
+        // Avatar (larger circle to match text height)
         val avatarView = ImageView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(32, 32).apply {
-                rightMargin = 8
+            layoutParams = LinearLayout.LayoutParams(48, 48).apply {
+                rightMargin = 12
             }
             scaleType = ImageView.ScaleType.CENTER_CROP
-            background = createCircleDrawable(accentColor)
 
             // Load avatar if available
             imageBase64?.let { base64 ->
                 try {
-                    val imageBytes: ByteArray = Base64.decode(base64, Base64.DEFAULT)
+                    val imageBytes = Base64.decode(base64, Base64.DEFAULT)
                     val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    setImageBitmap(bitmap)
+                    if (bitmap != null) {
+                        setImageBitmap(bitmap)
+                        // Use circular background drawable as both background and clip
+                        background = createCircleDrawable(Color.TRANSPARENT)
+                        clipToOutline = true
+                    } else {
+                        background = createCircleDrawable(accentColor)
+                    }
                 } catch (e: Exception) {
                     // Keep the colored circle background if image fails to load
+                    background = createCircleDrawable(accentColor)
                 }
+            } ?: run {
+                // No image provided, use colored circle
+                background = createCircleDrawable(accentColor)
             }
         }
 
@@ -201,13 +212,13 @@ class HUDFragment : Fragment() {
 
         val nameText = TextView(requireContext()).apply {
             text = name
-            textSize = 16f
+            textSize = 17f  // Slightly larger
             setTextColor(Color.WHITE)
         }
 
         val killText = TextView(requireContext()).apply {
             text = "$killCount kills"
-            textSize = 12f
+            textSize = 13f  // Slightly larger
             setTextColor(Color.LTGRAY)
         }
 

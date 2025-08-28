@@ -276,12 +276,14 @@ class GameFragment : Fragment() {
         val menu = bottomNavigation.menu
         val levelUpItem = menu.findItem(R.id.nav_levelup)
         levelUpItem?.title = "Level Up! ⭐"
+        levelUpItem.isEnabled = true
     }
 
     private fun removeLevelUpBadge() {
         val menu = bottomNavigation.menu
         val levelUpItem = menu.findItem(R.id.nav_levelup)
-        levelUpItem?.title = "Level Up"
+        levelUpItem?.title = "Locked"
+        levelUpItem.isEnabled = false
     }
 
     private fun loadPlayerData() {
