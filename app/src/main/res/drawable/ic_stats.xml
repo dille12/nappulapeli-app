@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Chart bars -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M4,20 L4,16 L7,16 L7,20 Z" />
+
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M8,20 L8,12 L11,12 L11,20 Z" />
+
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M12,20 L12,8 L15,8 L15,20 Z" />
+
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M16,20 L16,14 L19,14 L19,20 Z" />
+
+    <!-- Base line -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M3,21 L21,21 L21,22 L3,22 Z" />
+
+    <!-- Y-axis -->
+    <path
+        android:fillColor="@android:color/black"
+        android:pathData="M3,3 L3,21 L2,21 L2,3 Z" />
+
+
+
+</vector>

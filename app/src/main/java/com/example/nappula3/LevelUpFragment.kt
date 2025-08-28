@@ -9,15 +9,12 @@ import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import org.json.JSONObject
 import androidx.core.graphics.toColorInt
+import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
+import org.json.JSONObject
 
 class LevelUpFragment : Fragment() {
 
@@ -46,6 +43,18 @@ class LevelUpFragment : Fragment() {
         pawnNameLabel.text = "LEVEL UP!"
         itemButtonsContainer.removeAllViews()
 
+        // Check if we have items to show
+        if (items.isEmpty()) {
+            val noItemsText = TextView(requireContext()).apply {
+                text = "No level up options available"
+                textSize = 16f
+                setPadding(16, 16, 16, 16)
+                setTextColor(Color.GRAY)
+            }
+            itemButtonsContainer.addView(noItemsText)
+            return
+        }
+
         for ((name, desc) in items) {
             val mb = MaterialButton(requireContext())
             val spannable = SpannableString("$name\n$desc")
@@ -57,27 +66,38 @@ class LevelUpFragment : Fragment() {
             mb.setStrokeColorResource(R.color.black)
             mb.setBackgroundColor("#455A64".toColorInt())
             mb.setTextColor(Color.WHITE)
+
+            // Add some margin between buttons
+            val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                bottomMargin = 16
+            }
+            mb.layoutParams = layoutParams
+
             mb.setOnClickListener {
                 if (!closing) {
                     closing = true
                     sendChoice(name)
-                    // Remove only this fragment (bottom panel). Header remains.
-                    parentFragmentManager.beginTransaction()
-                        .remove(this@LevelUpFragment)
-                        .commitAllowingStateLoss()
-                    // Clear pending state
-                    act.pendingLevelUpItems.clear()
-                    act.pendingLevelUpPawn = null
-
-                    // Revert back to HUD
-                    val hudLines = (activity as MainActivity).latestHudLines
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.bottomPanelContainer, HUDFragment.newInstance(hudLines))
-                        .commit()
+                    handleLevelUpCompletion()
                 }
             }
             itemButtonsContainer.addView(mb)
         }
+    }
+
+    private fun handleLevelUpCompletion() {
+        val act = requireActivity() as MainActivity
+
+        // Clear pending state in MainActivity
+        act.pendingLevelUpItems.clear()
+        act.pendingLevelUpPawn = null
+        act.pendingLevelUp = false
+
+        // Notify GameFragment that level up is completed
+        val gameFragment = parentFragment as? GameFragment
+        gameFragment?.onLevelUpCompleted()
     }
 
     private fun sendChoice(itemName: String) {
@@ -87,5 +107,13 @@ class LevelUpFragment : Fragment() {
             .put("pawn", act.pendingLevelUpPawn ?: act.playerName.orEmpty())
             .put("item", itemName)
         act.sendJson(json.toString())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh the items in case they changed
+        if (::itemButtonsContainer.isInitialized) {
+            populateItems()
+        }
     }
 }

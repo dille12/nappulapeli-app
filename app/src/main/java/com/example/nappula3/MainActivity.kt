@@ -126,6 +126,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Callback for incoming messages
+    // Updated methods for MainActivity.kt
+
+
+    // Add these new variables to your MainActivity class
+    var mostKilledBy: Map<String, Any>? = null  // nemesis data
+    var mostKilled: Map<String, Any>? = null    // victim data
+
     private fun handleMessage(message: String) {
 
         Log.d("WS", "recv: $message")
@@ -147,24 +154,26 @@ class MainActivity : AppCompatActivity() {
                 // Convert to Android color int
                 val colorInt = android.graphics.Color.rgb(r, g, b)
 
-                // Pass the data to GameFragment
-                val fragment = GameFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt("bgColor", colorInt)
-                    }
+                // Check if GameFragment is already showing
+                val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (currentFragment is GameFragment) {
+                    // Just refresh the existing fragment
+                    currentFragment.refreshData()
+                } else {
+                    // Create new GameFragment
+                    val fragment = GameFragment.newInstance(colorInt)
+
+                    // Transition to GameFragment
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .commit()
                 }
-
-                // Transition to GameFragment
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .commit()
-
             }
 
             "statUpdate" -> {
                 val statsObj = json.getJSONObject("stats")
                 for (key in statsObj.keys()) {
-                    val value = statsObj.getInt(key)  // or getDouble/getString depending
+                    val value = statsObj.getString(key)  // or getDouble/getString depending
                     playerStats[key] = value
                 }
 
@@ -190,12 +199,47 @@ class MainActivity : AppCompatActivity() {
                 }
                 latestHudLines = hudLines
 
-                Log.d("WS", "Switching to HUD")
-                val hudFragment = HUDFragment.newInstance(latestHudLines)
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.bottomPanelContainer, hudFragment)
-                    .commit()
+                Log.d("WS", "Updated HUD data with ${hudLines.size} items")
 
+                // Update GameFragment HUD if it's currently showing
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateHudData(hudLines)
+                }
+            }
+
+            "rivalryInfo" -> {
+                // Parse nemesis (most killed by)
+                if (json.has("mostKilledBy") && !json.isNull("mostKilledBy")) {
+                    val nemesisObj = json.getJSONObject("mostKilledBy")
+                    mostKilledBy = mapOf(
+                        "name" to nemesisObj.optString("name"),
+                        "image" to nemesisObj.optString("image"),
+                        "kills" to nemesisObj.optInt("kills", 0)
+                    )
+                } else {
+                    mostKilledBy = null
+                }
+
+                // Parse victim (most killed)
+                if (json.has("mostKilled") && !json.isNull("mostKilled")) {
+                    val victimObj = json.getJSONObject("mostKilled")
+                    mostKilled = mapOf(
+                        "name" to victimObj.optString("name"),
+                        "image" to victimObj.optString("image"),
+                        "kills" to victimObj.optInt("kills", 0)
+                    )
+                } else {
+                    mostKilled = null
+                }
+
+                Log.d("WS", "Updated rivalry data - Nemesis: ${mostKilledBy?.get("name")}, Victim: ${mostKilled?.get("name")}")
+
+                // Update GameFragment rivalry data if it's currently showing
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateRivalryData(mostKilledBy, mostKilled)
+                }
             }
 
             "levelUpChoices" -> {
@@ -215,8 +259,7 @@ class MainActivity : AppCompatActivity() {
                 pendingLevelUpPawn = pawnName
                 pendingLevelUp = true
 
-                // Show the LevelUpFragment
-
+                // The GameFragment will automatically detect this and switch to level up tab
             }
 
             "ult_ready" -> {
