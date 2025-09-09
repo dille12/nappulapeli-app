@@ -129,9 +129,13 @@ class MainActivity : AppCompatActivity() {
     // Updated methods for MainActivity.kt
 
 
+    // Updated methods for MainActivity.kt
+
     // Add these new variables to your MainActivity class
     var mostKilledBy: Map<String, Any>? = null  // nemesis data
     var mostKilled: Map<String, Any>? = null    // victim data
+    var nextWeapon: Map<String, Any>? = null    // next weapon in gun game progression
+    var shopItems: List<Map<String, Any>> = emptyList()  // available shop items
 
     private fun handleMessage(message: String) {
 
@@ -173,7 +177,7 @@ class MainActivity : AppCompatActivity() {
             "statUpdate" -> {
                 val statsObj = json.getJSONObject("stats")
                 for (key in statsObj.keys()) {
-                    val value = statsObj.getString(key)  // or getDouble/getString depending
+                    val value = statsObj.getInt(key)  // or getDouble/getString depending
                     playerStats[key] = value
                 }
 
@@ -260,6 +264,104 @@ class MainActivity : AppCompatActivity() {
                 pendingLevelUp = true
 
                 // The GameFragment will automatically detect this and switch to level up tab
+            }
+
+            "shopUpdate" -> {
+                // Parse next weapon
+                if (json.has("nextWeapon") && !json.isNull("nextWeapon")) {
+                    val weaponObj = json.getJSONObject("nextWeapon")
+                    nextWeapon = mapOf(
+                        "name" to weaponObj.optString("name"),
+                        "price" to weaponObj.optInt("price", 0),
+                        "image" to weaponObj.optString("image")
+                    )
+                } else {
+                    nextWeapon = null
+                }
+
+                // Parse shop items
+                val itemsArray = json.optJSONArray("items")
+                val items = mutableListOf<Map<String, Any>>()
+                if (itemsArray != null) {
+                    for (i in 0 until itemsArray.length()) {
+                        val itemObj = itemsArray.getJSONObject(i)
+                        items.add(mapOf(
+                            "name" to itemObj.optString("name"),
+                            "price" to itemObj.optInt("price", 0),
+                            "image" to itemObj.optString("image"),
+                            "description" to itemObj.optString("description", "")
+                        ))
+                    }
+                }
+                shopItems = items
+
+                Log.d("WS", "Updated shop data - Next weapon: ${nextWeapon?.get("name")}, Items: ${items.size}")
+
+                // Update GameFragment shop if it's currently showing
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateShopData(nextWeapon, shopItems)
+                }
+            }
+
+            "rerollResponse" -> {
+                val success = json.optBoolean("success", false)
+                val message = json.optString("message", "")
+                val rerollType = json.optString("rerollType", "weapon")
+
+                Log.d("WS", "Reroll response: $rerollType - Success: $success - Message: $message")
+
+                // Update GameFragment with reroll result
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.handleRerollResponse(success, rerollType, message)
+                }
+            }
+
+            "drinkRegistrationResponse" -> {
+                val success = json.optBoolean("success", false)
+                val drinkType = json.optString("drinkType")
+                val drinkValue = json.optInt("drinkValue", 0)
+                val message = json.optString("message", "")
+
+                Log.d("WS", "Drink registration response: $drinkType (+$drinkValue) - Success: $success - Message: $message")
+
+                // Update GameFragment with registration result
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.handleDrinkRegistrationResponse(success, drinkType, drinkValue, message)
+                }
+            }
+
+            "purchaseResponse" -> {
+                val success = json.optBoolean("success", false)
+                val itemName = json.optString("itemName")
+                val message = json.optString("message", "")
+
+                Log.d("WS", "Purchase response: $itemName - Success: $success - Message: $message")
+
+                // Update GameFragment with purchase result
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.handlePurchaseResponse(success, itemName, message)
+                }
+            }
+
+            "teamSwitch" -> {
+                val colorArray = json.getJSONArray("newTeamColor")
+                val r = (colorArray.getInt(0) * 0.25).toInt()
+                val g = (colorArray.getInt(1) * 0.25).toInt()
+                val b = (colorArray.getInt(2) * 0.25).toInt()
+                // Convert to Android color int
+                val newColorInt = android.graphics.Color.rgb(r, g, b)
+
+                Log.d("WS", "Team switch! New color: RGB($r, $g, $b)")
+
+                // Update GameFragment background color if visible
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateTeamColor(newColorInt)
+                }
             }
 
             "ult_ready" -> {

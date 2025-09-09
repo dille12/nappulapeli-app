@@ -2,17 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_hud"
-        android:icon="@drawable/ic_hud"
+        android:icon="@drawable/home_24px"
         android:title="HUD" />
 
     <item
         android:id="@+id/nav_levelup"
-        android:icon="@drawable/ic_level_up"
-        android:title="Level Up"
-        android:enabled="false" />
+        android:icon="@drawable/star_24px"
+        android:title="Level Up" />
+
+    <item
+        android:id="@+id/nav_shop"
+        android:icon="@drawable/shopping_cart_24px"
+        android:title="Shop" />
 
     <item
         android:id="@+id/nav_stats"
-        android:icon="@drawable/ic_stats"
+        android:icon="@drawable/timeline_24px"
         android:title="Stats" />
 </menu>

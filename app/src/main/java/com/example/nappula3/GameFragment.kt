@@ -1,6 +1,7 @@
 package com.example.nappula3
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
@@ -8,12 +9,16 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.*
+import org.json.JSONObject
 
 class GameFragment : Fragment() {
 
@@ -22,11 +27,14 @@ class GameFragment : Fragment() {
     private lateinit var levelText: TextView
     private lateinit var bottomNavigation: BottomNavigationView
 
+    private lateinit var musicRequestFab: FloatingActionButton
+
     private var scanJob: Job? = null
 
     // Keep references to fragments to avoid recreation
     private var hudFragment: HUDFragment? = null
     private var levelUpFragment: LevelUpFragment? = null
+    private var shopFragment: ShopFragment? = null
     private var currentBottomFragment: Fragment? = null
 
     // Cache data to prevent loss on view recreation
@@ -118,6 +126,7 @@ class GameFragment : Fragment() {
         // Clear fragment references to prevent memory leaks
         hudFragment = null
         levelUpFragment = null
+        shopFragment = null
         currentBottomFragment = null
     }
 
@@ -131,7 +140,9 @@ class GameFragment : Fragment() {
         nameTextLabel = view.findViewById(R.id.nameTextLabel)
         levelText = view.findViewById(R.id.level)
         bottomNavigation = view.findViewById(R.id.bottom_navigation)
+        musicRequestFab = view.findViewById(R.id.musicRequestFab)
 
+        setupMusicRequestFab()
         setupBottomNavigation()
         loadPlayerData()
         updateUI()
@@ -150,17 +161,12 @@ class GameFragment : Fragment() {
                     true
                 }
                 R.id.nav_levelup -> {
-                    // Only allow if level up is available
-                    val main = activity as? MainActivity
-                    if (main?.pendingLevelUp == true || main?.pendingLevelUpItems?.isNotEmpty() == true) {
-                        showLevelUpFragment()
-                        true
-                    } else {
-                        // Don't switch if no level up available, but don't prevent the click
-                        // Just show an empty state
-                        showEmptyLevelUpFragment()
-                        true
-                    }
+                    showLevelUpFragment()
+                    true
+                }
+                R.id.nav_shop -> {
+                    showShopFragment()
+                    true
                 }
                 R.id.nav_stats -> {
                     showStatsFragment()
@@ -170,10 +176,81 @@ class GameFragment : Fragment() {
             }
         }
 
-        // Set default selection and initial button states
+        // Set default selection
         bottomNavigation.selectedItemId = R.id.nav_hud
-        updateLevelUpButtonState(false) // Initially disabled
+        // Initialize badge state (initially no level up available)
+        updateLevelUpButtonState(false)
     }
+
+    private fun setupMusicRequestFab() {
+        musicRequestFab.setOnClickListener {
+            showMusicRequestDialog()
+        }
+    }
+
+    private fun showMusicRequestDialog() {
+        if (!isAdded) return
+
+        val editText = EditText(requireContext()).apply {
+            hint = "Paste YouTube link here..."
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
+            setPadding(48, 48, 48, 48)
+        }
+
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("🎵 Request Song")
+        builder.setMessage("Add a song to the game playlist!")
+        builder.setView(editText)
+
+        builder.setPositiveButton("Add to Playlist") { _, _ ->
+            val youtubeLink = editText.text.toString().trim()
+            if (youtubeLink.isNotEmpty()) {
+                if (isValidYouTubeLink(youtubeLink)) {
+                    requestSongAddition(youtubeLink)
+                } else {
+                    Toast.makeText(requireContext(), "❌ Please enter a valid YouTube link", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        builder.setNegativeButton("Cancel", null)
+        builder.show()
+    }
+
+    private fun isValidYouTubeLink(link: String): Boolean {
+        return link.contains("youtube.com") || link.contains("youtu.be")
+    }
+
+    private fun requestSongAddition(youtubeLink: String) {
+        val main = activity as? MainActivity ?: return
+
+        val cleanedLink = cleanYouTubeLink(youtubeLink)
+
+        val json = JSONObject()
+            .put("type", "musicRequest")
+            .put("youtubeLink", cleanedLink)
+            .put("pawnName", main.playerName ?: "Unknown")
+
+        main.sendJson(json.toString())
+        Toast.makeText(requireContext(), "🎵 Video added to playlist!", Toast.LENGTH_SHORT).show()
+        android.util.Log.d("GameFragment", "Requested video addition: $cleanedLink")
+    }
+
+    private fun cleanYouTubeLink(link: String): String {
+        return when {
+            link.contains("youtube.com/watch?v=") -> {
+                val videoId = link.substringAfter("youtube.com/watch?v=").substringBefore("&")
+                "https://www.youtube.com/watch?v=$videoId"
+            }
+            link.contains("youtu.be/") -> {
+                val videoId = link.substringAfter("youtu.be/").substringBefore("?")
+                "https://www.youtube.com/watch?v=$videoId"
+            }
+            else -> link
+        }
+    }
+
+
 
     private fun showHudFragment() {
         // Always get the latest HUD data and rivalry data
@@ -217,12 +294,14 @@ class GameFragment : Fragment() {
         showHudFragment()
     }
 
-    private fun showEmptyLevelUpFragment() {
-        // Create a new empty level up fragment
-        levelUpFragment = LevelUpFragment()
-        currentBottomFragment = levelUpFragment
+    private fun showShopFragment() {
+        if (shopFragment == null) {
+            shopFragment = ShopFragment.newInstance()
+        }
+
+        currentBottomFragment = shopFragment
         childFragmentManager.beginTransaction()
-            .replace(R.id.bottomPanelContainer, levelUpFragment!!)
+            .replace(R.id.bottomPanelContainer, shopFragment!!)
             .commit()
     }
 
@@ -251,17 +330,103 @@ class GameFragment : Fragment() {
         }
     }
 
+    // Method to update team color when switching teams
+    fun updateTeamColor(newColor: Int) {
+        if (isAdded) {
+            cachedBgColor = newColor
+            view?.setBackgroundColor(newColor)
+
+            // Optional: Add a brief visual effect to indicate team switch
+            showTeamSwitchEffect()
+        }
+    }
+
+    // Method to update shop data
+    fun updateShopData(nextWeapon: Map<String, Any>?, items: List<Map<String, Any>>, rerollCost: Int = 25) {
+        if (isAdded) {
+            val currency = cachedPlayerStats["currency"] as? Int ?: 0
+            shopFragment?.updateShop(currency, nextWeapon, items, rerollCost)
+        }
+    }
+
+    // Method to handle purchase responses
+    fun handlePurchaseResponse(success: Boolean, itemName: String, message: String) {
+        if (isAdded) {
+            // Show a brief message to user
+            val messageText = if (success) {
+                "✅ Purchased $itemName!"
+            } else {
+                "❌ $message"
+            }
+
+            Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
+
+            if (success) {
+                // Refresh shop data after successful purchase
+                val main = activity as? MainActivity
+                val currency = cachedPlayerStats["currency"] as? Int ?: 0
+                shopFragment?.updateShop(currency, main?.nextWeapon, main?.shopItems ?: emptyList())
+            }
+        }
+    }
+
+    // Method to handle reroll responses
+    fun handleRerollResponse(success: Boolean, rerollType: String, message: String) {
+        if (isAdded) {
+            // Show a brief message to user
+            val messageText = if (success) {
+                "🎲 Rerolled $rerollType!"
+            } else {
+                "❌ $message"
+            }
+
+            Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
+
+            if (success) {
+                // Refresh shop data after successful reroll
+                val main = activity as? MainActivity
+                val currency = cachedPlayerStats["currency"] as? Int ?: 0
+                shopFragment?.updateShop(currency, main?.nextWeapon, main?.shopItems ?: emptyList())
+            }
+        }
+    }
+
+    // Method to handle drink registration responses
+    fun handleDrinkRegistrationResponse(success: Boolean, drinkType: String, drinkValue: Int, message: String) {
+        if (isAdded) {
+            // Show a brief message to user
+            val messageText = if (success) {
+                "🍺 Registered $drinkType (+$drinkValue drinks)!"
+            } else {
+                "❌ $message"
+            }
+
+            Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
+
+            if (success) {
+                // Currency will be updated via statUpdate packet from server
+                // No need to manually update here
+            }
+        }
+    }
+
+    private fun showTeamSwitchEffect() {
+        // Add a brief flash effect or animation to make the team switch more noticeable
+        view?.animate()
+            ?.alpha(0.7f)
+            ?.setDuration(150)
+            ?.withEndAction {
+                view?.animate()
+                    ?.alpha(1.0f)
+                    ?.setDuration(150)
+                    ?.start()
+            }
+            ?.start()
+    }
+
     private fun updateLevelUpButtonState(isEnabled: Boolean) {
         if (::bottomNavigation.isInitialized) {
-            val menu = bottomNavigation.menu
-            val levelUpItem = menu.findItem(R.id.nav_levelup)
-            levelUpItem?.isEnabled = isEnabled
-
-            // Visual feedback
-            val alpha = if (isEnabled) 1.0f else 0.5f
-            levelUpItem?.icon?.alpha = (alpha * 255).toInt()
-
-            // Add notification badge when enabled
+            // Tab is always enabled, just control the badge
             if (isEnabled) {
                 addLevelUpBadge()
             } else {
@@ -271,19 +436,21 @@ class GameFragment : Fragment() {
     }
 
     private fun addLevelUpBadge() {
-        // You can use BadgeDrawable from Material Components
-        // For now, we'll change the title to indicate availability
-        val menu = bottomNavigation.menu
-        val levelUpItem = menu.findItem(R.id.nav_levelup)
-        levelUpItem?.title = "Level Up! ⭐"
-        levelUpItem.isEnabled = true
+        if (::bottomNavigation.isInitialized) {
+            // Use Material Components badge
+            val badge = bottomNavigation.getOrCreateBadge(R.id.nav_levelup)
+            badge.isVisible = true
+            badge.backgroundColor = Color.RED
+            badge.badgeTextColor = Color.WHITE
+            // Empty badge (just a dot)
+            badge.clearNumber()
+        }
     }
 
     private fun removeLevelUpBadge() {
-        val menu = bottomNavigation.menu
-        val levelUpItem = menu.findItem(R.id.nav_levelup)
-        levelUpItem?.title = "Locked"
-        levelUpItem.isEnabled = false
+        if (::bottomNavigation.isInitialized) {
+            bottomNavigation.removeBadge(R.id.nav_levelup)
+        }
     }
 
     private fun loadPlayerData() {
@@ -330,6 +497,12 @@ class GameFragment : Fragment() {
 
         // Update display
         updateStatsDisplay(playerStats)
+
+        // Update shop currency if shop is visible
+        val currency = playerStats["currency"] as? Int
+        if (currency != null) {
+            shopFragment?.updateCurrency(currency)
+        }
     }
 
     @SuppressLint("SetTextI18n")
