@@ -16,6 +16,13 @@
         android:padding="16dp"
         tools:ignore="HardcodedText" />
 
+    <EditText
+        android:id="@+id/ipInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="IP Address"
+        android:inputType="text" />
+
     <Button
         android:id="@+id/nextButton"
         android:layout_width="wrap_content"
@@ -24,6 +31,7 @@
         android:enabled="false"
         android:visibility="visible"
         tools:ignore="HardcodedText" />
+
 
     <Button
         android:id="@+id/retryButton"

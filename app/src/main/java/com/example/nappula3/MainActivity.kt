@@ -57,9 +57,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (webSocket == null) {
-            connectWebSocket()
-        }
+
     }
 
     fun notifyConnectionSuccess() {
@@ -77,9 +75,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun connectWebSocket() {
+    fun connectWebSocket(ip: String) {
+        Log.d("WS", "ws://$ip:8765") //
         val request = Request.Builder()
-            .url("ws://192.168.0.102:8765") // change IP as needed
+            .url("ws://$ip:8765")
             .build()
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
