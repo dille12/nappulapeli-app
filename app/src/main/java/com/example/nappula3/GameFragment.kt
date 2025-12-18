@@ -272,6 +272,13 @@ class GameFragment : Fragment() {
     }
 
     private fun showLevelUpFragment() {
+        val main = activity as? MainActivity
+        if (main?.pendingLevelUp != true) {
+            // Guard against navigating to level up when nothing is pending
+            bottomNavigation.selectedItemId = R.id.nav_hud
+            return
+        }
+
         if (levelUpFragment == null) {
             levelUpFragment = LevelUpFragment()
         }
@@ -426,11 +433,18 @@ class GameFragment : Fragment() {
 
     private fun updateLevelUpButtonState(isEnabled: Boolean) {
         if (::bottomNavigation.isInitialized) {
-            // Tab is always enabled, just control the badge
+            val levelUpItem = bottomNavigation.menu.findItem(R.id.nav_levelup)
+            levelUpItem.isEnabled = isEnabled
+
             if (isEnabled) {
                 addLevelUpBadge()
             } else {
                 removeLevelUpBadge()
+
+                // If the disabled tab was selected, return to the HUD
+                if (bottomNavigation.selectedItemId == R.id.nav_levelup) {
+                    bottomNavigation.selectedItemId = R.id.nav_hud
+                }
             }
         }
     }
