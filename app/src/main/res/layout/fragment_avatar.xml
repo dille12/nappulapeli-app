@@ -29,11 +29,35 @@
         android:layout_marginBottom="16dp"/>
 
     <Button
+        android:id="@+id/infoButton"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:text="?"
+        android:textSize="14sp"
+        android:background="@android:drawable/btn_default" />
+
+    <TextView
+        android:id="@+id/directionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="← Varmista et kuva osottaa VASEMMALLE. Muuten oot vitun pässi."
+        android:textStyle="bold"
+        android:textColor="#FF6600"
+        android:layout_marginTop="8dp" />
+
+    <Button
         android:id="@+id/selectImageButton"
         android:text="Select Image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/flipButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Flip"
+        android:enabled="false" />
 
     <Button
         android:id="@+id/nextButton"
