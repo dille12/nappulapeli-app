@@ -330,7 +330,7 @@ class GameFragment : Fragment() {
     }
 
     // Method to update rivalry data
-    fun updateRivalryData(nemesis: Map<String, Any>?, victim: Map<String, Any>?) {
+    fun updateRivalryData(nemesis: Map<String, Any?>?, victim: Map<String, Any?>?) {
         // Only update if fragment is added and HUD fragment exists
         if (isAdded) {
             hudFragment?.updateRivalryData(nemesis, victim)
@@ -349,7 +349,7 @@ class GameFragment : Fragment() {
     }
 
     // Method to update shop data
-    fun updateShopData(nextWeapon: Map<String, Any>?, items: List<Map<String, Any>>, rerollCost: Int = 25) {
+    fun updateShopData(nextWeapon: Map<String, Any?>?, items: List<Map<String, Any?>>, rerollCost: Int = 25) {
         if (isAdded) {
             val currency = cachedPlayerStats["Currency"] as? Int ?: 0
             shopFragment?.updateShop(currency, nextWeapon, items, rerollCost)
