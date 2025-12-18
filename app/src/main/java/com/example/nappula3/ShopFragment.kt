@@ -60,7 +60,11 @@ class ShopFragment : Fragment() {
         val main = activity as? MainActivity
         if (main != null) {
             // Get currency from player stats
-            currentCurrency = main.playerStats["Currency"] as? Int ?: 0
+            currentCurrency = when (val v = main.playerStats["Currency"]) {
+                is Int -> v
+                is String -> v.toIntOrNull() ?: 0
+                else -> 0
+            }
 
             // Get shop data from MainActivity (you'll need to add these)
             nextWeapon = main.nextWeapon

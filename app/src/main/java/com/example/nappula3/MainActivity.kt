@@ -214,17 +214,32 @@ class MainActivity : AppCompatActivity() {
 
             "statUpdate" -> {
                 val statsObj = json.getJSONObject("stats")
+
                 for (key in statsObj.keys()) {
-                    val value = statsObj.getString(key)  // or getDouble/getString depending
+                    val raw = statsObj.get(key)
+
+                    val value = when (raw) {
+                        is Int -> raw
+                        is Long -> {
+                            if (raw in Int.MIN_VALUE..Int.MAX_VALUE) raw.toInt() else raw
+                        }
+                        is Double -> {
+                            if (raw % 1.0 == 0.0) raw.toInt() else raw.toFloat()
+                        }
+                        is Boolean -> raw
+                        is String -> raw
+                        else -> raw.toString()
+                    }
+
                     playerStats[key] = value
                 }
 
-                // Update GameFragment UI if visible
                 val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
                 if (fragment is GameFragment) {
                     fragment.updateStats(playerStats)
                 }
             }
+
 
             "hudInfo" -> {
                 val linesJson = json.getJSONArray("lines")
