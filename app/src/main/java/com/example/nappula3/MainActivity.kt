@@ -89,6 +89,11 @@ class MainActivity : AppCompatActivity() {
 
 
     fun connectWebSocket(ip: String) {
+        if (ip.isBlank()) {
+            Log.e("WS", "Refusing to connect: IP is blank")
+            notifyConnectionFailed()
+            return
+        }
         latestIp = ip
         Log.d("WS", "ws://$ip:8765") //
         val request = Request.Builder()
