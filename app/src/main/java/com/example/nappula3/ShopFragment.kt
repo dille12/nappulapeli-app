@@ -290,7 +290,7 @@ class ShopFragment : Fragment() {
                 }
 
                 val pixelArtDrawable = BitmapDrawable(resources, bitmap).apply {
-                    alpha = 255
+                    alpha = 180
                     isFilterBitmap = false
                     setAntiAlias(false)
                     setDither(false)
