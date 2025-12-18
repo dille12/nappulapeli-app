@@ -17,6 +17,10 @@ import androidx.activity.OnBackPressedCallback
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        private const val KEY_LATEST_IP = "latest_ip"
+    }
+
     var playerName: String? = null
     var playerImageBase64: String? = null
 
@@ -32,9 +36,13 @@ class MainActivity : AppCompatActivity() {
     var webSocket: WebSocket? = null
     private val client = OkHttpClient()
 
+    var latestIp: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        latestIp = savedInstanceState?.getString(KEY_LATEST_IP)
 
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
@@ -60,6 +68,11 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_LATEST_IP, latestIp)
+    }
+
     fun notifyConnectionSuccess() {
         val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
         if (fragment is ConnectionFragment) {
@@ -76,6 +89,7 @@ class MainActivity : AppCompatActivity() {
 
 
     fun connectWebSocket(ip: String) {
+        latestIp = ip
         Log.d("WS", "ws://$ip:8765") //
         val request = Request.Builder()
             .url("ws://$ip:8765")
@@ -98,20 +112,40 @@ class MainActivity : AppCompatActivity() {
             override fun onFailure(ws: WebSocket, t: Throwable, response: Response?) {
                 webSocket = null
                 runOnUiThread {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ConnectionFragment())
-                        .commit()
-                    notifyConnectionFailed()
+                    val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                    if (fragment is ConnectionFragment) {
+                        fragment.onConnectionFailed()
+                    } else {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, ConnectionFragment.newInstance(latestIp))
+                            .runOnCommit {
+                                val connectionFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                                if (connectionFragment is ConnectionFragment) {
+                                    connectionFragment.onConnectionFailed()
+                                }
+                            }
+                            .commit()
+                    }
                 }
 
             }
             override fun onClosed(ws: WebSocket, code: Int, reason: String) {
                 webSocket = null
                 runOnUiThread {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, ConnectionFragment())
-                        .commit()
-                    notifyConnectionFailed()
+                    val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                    if (fragment is ConnectionFragment) {
+                        fragment.onConnectionFailed()
+                    } else {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragment_container, ConnectionFragment.newInstance(latestIp))
+                            .runOnCommit {
+                                val connectionFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                                if (connectionFragment is ConnectionFragment) {
+                                    connectionFragment.onConnectionFailed()
+                                }
+                            }
+                            .commit()
+                    }
                 }
             }
 
@@ -371,4 +405,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
