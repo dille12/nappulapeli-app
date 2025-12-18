@@ -84,6 +84,7 @@
         android:contentDescription="TODO"
         android:src="@drawable/music_24px"
         android:backgroundTint="#FF4081"
+        android:visibility="gone"
         app:tint="@android:color/white" />
 
 </RelativeLayout>
