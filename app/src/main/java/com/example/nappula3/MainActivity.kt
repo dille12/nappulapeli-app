@@ -51,9 +51,9 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-        playerStats["xp"] = 0
-        playerStats["level"] = 1
-        playerStats["xpToNextLevel"] = 10
+        playerStats["XP"] = 0
+        playerStats["Level"] = 1
+        playerStats["XP to next level"] = 10
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -215,7 +215,7 @@ class MainActivity : AppCompatActivity() {
             "statUpdate" -> {
                 val statsObj = json.getJSONObject("stats")
                 for (key in statsObj.keys()) {
-                    val value = statsObj.getInt(key)  // or getDouble/getString depending
+                    val value = statsObj.getString(key)  // or getDouble/getString depending
                     playerStats[key] = value
                 }
 

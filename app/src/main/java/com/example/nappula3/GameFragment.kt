@@ -351,7 +351,7 @@ class GameFragment : Fragment() {
     // Method to update shop data
     fun updateShopData(nextWeapon: Map<String, Any>?, items: List<Map<String, Any>>, rerollCost: Int = 25) {
         if (isAdded) {
-            val currency = cachedPlayerStats["currency"] as? Int ?: 0
+            val currency = cachedPlayerStats["Currency"] as? Int ?: 0
             shopFragment?.updateShop(currency, nextWeapon, items, rerollCost)
         }
     }
@@ -371,7 +371,7 @@ class GameFragment : Fragment() {
             if (success) {
                 // Refresh shop data after successful purchase
                 val main = activity as? MainActivity
-                val currency = cachedPlayerStats["currency"] as? Int ?: 0
+                val currency = cachedPlayerStats["Currency"] as? Int ?: 0
                 shopFragment?.updateShop(currency, main?.nextWeapon, main?.shopItems ?: emptyList())
             }
         }
@@ -392,7 +392,7 @@ class GameFragment : Fragment() {
             if (success) {
                 // Refresh shop data after successful reroll
                 val main = activity as? MainActivity
-                val currency = cachedPlayerStats["currency"] as? Int ?: 0
+                val currency = cachedPlayerStats["Currency"] as? Int ?: 0
                 shopFragment?.updateShop(currency, main?.nextWeapon, main?.shopItems ?: emptyList())
             }
         }
@@ -513,7 +513,7 @@ class GameFragment : Fragment() {
         updateStatsDisplay(playerStats)
 
         // Update shop currency if shop is visible
-        val currency = playerStats["currency"] as? Int
+        val currency = playerStats["Currency"] as? Int
         if (currency != null) {
             shopFragment?.updateCurrency(currency)
         }
@@ -521,9 +521,9 @@ class GameFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun updateStatsDisplay(playerStats: Map<String, Any>) {
-        val level = playerStats["level"]
-        val xp = playerStats["xp"]
-        val xpToNextLevel = playerStats["xpToNextLevel"]
+        val level = playerStats["Level"]
+        val xp = playerStats["XP"]
+        val xpToNextLevel = playerStats["XP to next level"]
 
         if (::levelText.isInitialized) {
             levelText.text = "LEVEL: $level XP: $xp / $xpToNextLevel"
