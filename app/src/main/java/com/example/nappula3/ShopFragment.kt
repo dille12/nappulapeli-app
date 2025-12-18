@@ -204,6 +204,7 @@ class ShopFragment : Fragment() {
             if (index % 2 == 0) {
                 currentRow = LinearLayout(requireContext()).apply {
                     orientation = LinearLayout.HORIZONTAL
+                    isBaselineAligned = false
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
