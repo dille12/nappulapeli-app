@@ -1,5 +1,6 @@
 package com.example.nappula3
 
+import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
@@ -25,8 +26,8 @@ class ShopFragment : Fragment() {
     private lateinit var itemsContainer: LinearLayout
 
     private var currentCurrency: Int = 0
-    private var nextWeapon: Map<String, Any>? = null
-    private var shopItems: List<Map<String, Any>> = emptyList()
+    private var nextWeapon: Map<String, Any?>? = null
+    private var shopItems: List<Map<String, Any?>> = emptyList()
     private var rerollCost: Int = 25 // Default reroll cost
 
     companion object {
@@ -136,23 +137,11 @@ class ShopFragment : Fragment() {
             val name = weapon["name"] as? String ?: "Unknown Weapon"
             val price = weapon["price"] as? Int ?: 0
             val imageBase64 = weapon["image"] as? String
+            val backgroundColor = weapon["backgroundColor"] as? Int ?: Color.parseColor("#FF6B35")
 
             nextWeaponButton.text = "$name\n💰 $price Drinks"
 
-            // Set weapon image as background if available
-            imageBase64?.let { base64 ->
-                try {
-                    val imageBytes = Base64.decode(base64, Base64.DEFAULT)
-                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    if (bitmap != null) {
-                        val drawable = BitmapDrawable(resources, bitmap)
-                        drawable.alpha = 128 // Make it semi-transparent as background
-                        nextWeaponButton.background = drawable
-                    }
-                } catch (e: Exception) {
-                    Log.e("ShopFragment", "Failed to load weapon image", e)
-                }
-            }
+            applyButtonBackground(nextWeaponButton, imageBase64, backgroundColor)
 
             // Set click listener for purchase
             nextWeaponButton.setOnClickListener {
@@ -210,124 +199,109 @@ class ShopFragment : Fragment() {
         var currentRow: LinearLayout? = null
         for ((index, item) in shopItems.withIndex()) {
             if (index % 2 == 0) {
-                // Create new row
                 currentRow = LinearLayout(requireContext()).apply {
                     orientation = LinearLayout.HORIZONTAL
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     ).apply {
-                        bottomMargin = 16
+                        bottomMargin = dpToPx(12)
                     }
                 }
                 itemsContainer.addView(currentRow)
             }
 
-            val itemCard = createItemCard(item)
-            currentRow?.addView(itemCard)
+            val itemButton = createItemButton(item, index % 2 == 0)
+            currentRow?.addView(itemButton)
+
+            // Add placeholder to keep columns aligned when item count is odd
+            if (index % 2 == 0 && index == shopItems.lastIndex) {
+                currentRow?.addView(createPlaceholderButton())
+            }
         }
     }
 
-    private fun createItemCard(item: Map<String, Any>): CardView {
+    private fun createItemButton(item: Map<String, Any?>, isLeftColumn: Boolean): MaterialButton {
         val name = item["name"] as? String ?: "Unknown Item"
         val price = item["price"] as? Int ?: 0
-        val imageBase64 = item["image"] as? String
+        val imageBase64 = (item["image"] as? String)?.takeIf { it.isNotBlank() }
         val description = item["description"] as? String ?: ""
+        val backgroundColor = item["backgroundColor"] as? Int ?: Color.argb(200, 45, 45, 45)
 
-        val cardView = CardView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                0,
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                1f
-            ).apply {
-                if (itemsContainer.childCount % 2 == 0) {
-                    rightMargin = 8
+        val button = MaterialButton(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(0, dpToPx(120), 1f).apply {
+                if (isLeftColumn) {
+                    rightMargin = dpToPx(8)
                 } else {
-                    leftMargin = 8
+                    leftMargin = dpToPx(8)
                 }
             }
-            radius = 12f
-            cardElevation = 4f
-            setCardBackgroundColor(Color.argb(180, 45, 45, 45))
-        }
-
-        val contentLayout = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 16)
-            gravity = android.view.Gravity.CENTER
-        }
-
-        // Item image
-        val itemImage = ImageView(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(64, 64).apply {
-                bottomMargin = 8
-            }
-            scaleType = ImageView.ScaleType.CENTER_CROP
-
-            imageBase64?.let { base64 ->
-                try {
-                    val imageBytes = Base64.decode(base64, Base64.DEFAULT)
-                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    if (bitmap != null) {
-                        setImageBitmap(bitmap)
-                    }
-                } catch (e: Exception) {
-                    Log.e("ShopFragment", "Failed to load item image for $name", e)
-                }
-            }
-        }
-
-        // Item name
-        val nameText = TextView(requireContext()).apply {
-            text = name
+            text = buildItemText(name, price, description)
             textSize = 14f
             setTextColor(Color.WHITE)
+            isAllCaps = false
             gravity = android.view.Gravity.CENTER
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                bottomMargin = 4
+            cornerRadius = dpToPx(12)
+            strokeWidth = dpToPx(1)
+            strokeColor = ColorStateList.valueOf(Color.argb(80, 255, 255, 255))
+            backgroundTintList = ColorStateList.valueOf(backgroundColor)
+        }
+
+        applyButtonBackground(button, imageBase64, backgroundColor)
+
+        val canAfford = currentCurrency >= price
+        button.isEnabled = canAfford
+        button.alpha = if (canAfford) 1.0f else 0.6f
+
+        button.setOnClickListener {
+            requestItemPurchase(name)
+        }
+
+        return button
+    }
+
+    private fun createPlaceholderButton(): View {
+        return View(requireContext()).apply {
+            layoutParams = LinearLayout.LayoutParams(0, dpToPx(120), 1f)
+            visibility = View.INVISIBLE
+        }
+    }
+
+    private fun applyButtonBackground(button: MaterialButton, imageBase64: String?, fallbackColor: Int) {
+        button.backgroundTintList = ColorStateList.valueOf(fallbackColor)
+
+        if (imageBase64.isNullOrEmpty()) {
+            button.setBackgroundColor(fallbackColor)
+            return
+        }
+
+        try {
+            val imageBytes = Base64.decode(imageBase64, Base64.DEFAULT)
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            if (bitmap != null) {
+                val drawable = BitmapDrawable(resources, bitmap)
+                drawable.alpha = 160
+                button.background = drawable
+            } else {
+                button.setBackgroundColor(fallbackColor)
             }
+        } catch (e: Exception) {
+            Log.e("ShopFragment", "Failed to load button background", e)
+            button.setBackgroundColor(fallbackColor)
         }
+    }
 
-        // Item description (if available)
-        val descText = TextView(requireContext()).apply {
-            text = description
-            textSize = 11f
-            setTextColor(Color.LTGRAY)
-            gravity = android.view.Gravity.CENTER
-            maxLines = 2
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                bottomMargin = 8
-            }
+    private fun buildItemText(name: String, price: Int, description: String): String {
+        val lines = mutableListOf("$name", "💰 $price Drinks")
+        if (description.isNotBlank()) {
+            lines.add(description)
         }
+        return lines.joinToString("\n")
+    }
 
-        // Price and buy button
-        val buyButton = MaterialButton(requireContext()).apply {
-            text = "💰 $price"
-            textSize = 12f
-            val canAfford = currentCurrency >= price
-            isEnabled = canAfford
-            alpha = if (canAfford) 1.0f else 0.6f
-
-            setOnClickListener {
-                requestItemPurchase(name)
-            }
-        }
-
-        contentLayout.addView(itemImage)
-        contentLayout.addView(nameText)
-        if (description.isNotEmpty()) {
-            contentLayout.addView(descText)
-        }
-        contentLayout.addView(buyButton)
-
-        cardView.addView(contentLayout)
-        return cardView
+    private fun dpToPx(dp: Int): Int {
+        val density = resources.displayMetrics.density
+        return (dp * density + 0.5f).toInt()
     }
 
     private fun requestWeaponPurchase() {
@@ -373,7 +347,7 @@ class ShopFragment : Fragment() {
     }
 
     // Public method to update shop data
-    fun updateShop(currency: Int, nextWeapon: Map<String, Any>?, items: List<Map<String, Any>>, rerollCost: Int = 25) {
+    fun updateShop(currency: Int, nextWeapon: Map<String, Any?>?, items: List<Map<String, Any?>>, rerollCost: Int = 25) {
         if (!isAdded) return
 
         this.currentCurrency = currency

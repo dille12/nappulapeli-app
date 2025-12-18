@@ -20,8 +20,8 @@ class HUDFragment : Fragment() {
 
     private lateinit var hudContainer: LinearLayout
     private var hudLines: List<Map<String, Any>> = emptyList()
-    private var nemesisData: Map<String, Any>? = null
-    private var victimData: Map<String, Any>? = null
+    private var nemesisData: Map<String, Any?>? = null
+    private var victimData: Map<String, Any?>? = null
 
     companion object {
         fun newInstance(hudLines: List<Map<String, Any>>): HUDFragment {
@@ -30,7 +30,7 @@ class HUDFragment : Fragment() {
             return fragment
         }
 
-        fun newInstance(hudLines: List<Map<String, Any>>, nemesis: Map<String, Any>?, victim: Map<String, Any>?): HUDFragment {
+        fun newInstance(hudLines: List<Map<String, Any>>, nemesis: Map<String, Any?>?, victim: Map<String, Any?>?): HUDFragment {
             val fragment = HUDFragment()
             fragment.hudLines = hudLines
             fragment.nemesisData = nemesis
@@ -397,7 +397,7 @@ class HUDFragment : Fragment() {
     }
 
     // Update rivalry data
-    fun updateRivalryData(nemesis: Map<String, Any>?, victim: Map<String, Any>?) {
+    fun updateRivalryData(nemesis: Map<String, Any?>?, victim: Map<String, Any?>?) {
         nemesisData = nemesis
         victimData = victim
         if (isAdded && ::hudContainer.isInitialized) {
@@ -406,7 +406,7 @@ class HUDFragment : Fragment() {
     }
 
     // Update both HUD and rivalry data at once
-    fun updateAll(newHudLines: List<Map<String, Any>>, nemesis: Map<String, Any>?, victim: Map<String, Any>?) {
+    fun updateAll(newHudLines: List<Map<String, Any>>, nemesis: Map<String, Any?>?, victim: Map<String, Any?>?) {
         hudLines = newHudLines
         nemesisData = nemesis
         victimData = victim

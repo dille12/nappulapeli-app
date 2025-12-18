@@ -170,10 +170,10 @@ class MainActivity : AppCompatActivity() {
     // Updated methods for MainActivity.kt
 
     // Add these new variables to your MainActivity class
-    var mostKilledBy: Map<String, Any>? = null  // nemesis data
-    var mostKilled: Map<String, Any>? = null    // victim data
-    var nextWeapon: Map<String, Any>? = null    // next weapon in gun game progression
-    var shopItems: List<Map<String, Any>> = emptyList()  // available shop items
+    var mostKilledBy: Map<String, Any?>? = null  // nemesis data
+    var mostKilled: Map<String, Any?>? = null    // victim data
+    var nextWeapon: Map<String, Any?>? = null    // next weapon in gun game progression
+    var shopItems: List<Map<String, Any?>> = emptyList()  // available shop items
 
     private fun handleMessage(message: String) {
 
@@ -326,7 +326,8 @@ class MainActivity : AppCompatActivity() {
                     nextWeapon = mapOf(
                         "name" to weaponObj.optString("name"),
                         "price" to weaponObj.optInt("price", 0),
-                        "image" to weaponObj.optString("image")
+                        "image" to weaponObj.optString("image"),
+                        "backgroundColor" to parseColorValue(weaponObj.opt("backgroundColor"))
                     )
                 } else {
                     nextWeapon = null
@@ -334,7 +335,7 @@ class MainActivity : AppCompatActivity() {
 
                 // Parse shop items
                 val itemsArray = json.optJSONArray("items")
-                val items = mutableListOf<Map<String, Any>>()
+                val items = mutableListOf<Map<String, Any?>>()
                 if (itemsArray != null) {
                     for (i in 0 until itemsArray.length()) {
                         val itemObj = itemsArray.getJSONObject(i)
@@ -342,7 +343,8 @@ class MainActivity : AppCompatActivity() {
                             "name" to itemObj.optString("name"),
                             "price" to itemObj.optInt("price", 0),
                             "image" to itemObj.optString("image"),
-                            "description" to itemObj.optString("description", "")
+                            "description" to itemObj.optString("description", ""),
+                            "backgroundColor" to parseColorValue(itemObj.opt("backgroundColor"))
                         ))
                     }
                 }
@@ -422,6 +424,43 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Add other types as needed
+        }
+    }
+
+    private fun parseColorValue(value: Any?): Int? {
+        return when (value) {
+            is String -> {
+                try {
+                    Color.parseColor(value)
+                } catch (e: IllegalArgumentException) {
+                    null
+                }
+            }
+            is org.json.JSONObject -> {
+                val r = value.optInt("r", -1)
+                val g = value.optInt("g", -1)
+                val b = value.optInt("b", -1)
+                if (r in 0..255 && g in 0..255 && b in 0..255) {
+                    Color.rgb(r, g, b)
+                } else {
+                    null
+                }
+            }
+            is org.json.JSONArray -> {
+                if (value.length() >= 3) {
+                    val r = value.optInt(0, -1)
+                    val g = value.optInt(1, -1)
+                    val b = value.optInt(2, -1)
+                    if (r in 0..255 && g in 0..255 && b in 0..255) {
+                        Color.rgb(r, g, b)
+                    } else {
+                        null
+                    }
+                } else {
+                    null
+                }
+            }
+            else -> null
         }
     }
 }
