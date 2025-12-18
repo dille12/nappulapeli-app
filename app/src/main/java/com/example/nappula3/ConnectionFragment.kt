@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.core.widget.addTextChangedListener
+import androidx.core.content.edit
 
 class ConnectionFragment : Fragment() {
 
@@ -91,7 +92,7 @@ class ConnectionFragment : Fragment() {
             Log.w("WS", "Skipping connect: IP is blank")
             statusText.text = "Enter the server IP to connect"
             nextButton.isEnabled = false
-            retryButton.visibility = View.GONE
+            retryButton.visibility = View.VISIBLE
             return
         }
         Log.d("WS", "Trying to connect to $ip")
@@ -100,9 +101,9 @@ class ConnectionFragment : Fragment() {
 
     private fun persistIp(ip: String) {
         requireActivity().getPreferences(Context.MODE_PRIVATE)
-            .edit()
-            .putString(ARG_IP, ip)
-            .apply()
+            .edit {
+                putString(ARG_IP, ip)
+            }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
