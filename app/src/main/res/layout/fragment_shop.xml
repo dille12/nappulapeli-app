@@ -37,6 +37,18 @@
             android:layout_marginBottom="16dp"
             style="@style/Widget.MaterialComponents.Button" />
 
+        <!-- Reroll Weapon Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rerollWeaponButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎲 Reroll Weapon (💰 25 Drinks)"
+            android:textSize="14sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#9C27B0"
+            android:layout_marginBottom="24dp"
+            style="@style/Widget.MaterialComponents.Button" />
+
         <!-- Next Weapon Section -->
         <TextView
             android:layout_width="match_parent"
@@ -71,17 +83,7 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- Reroll Weapon Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/rerollWeaponButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="🎲 Reroll Weapon (💰 25 Drinks)"
-            android:textSize="14sp"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#9C27B0"
-            android:layout_marginBottom="24dp"
-            style="@style/Widget.MaterialComponents.Button" />
+
 
         <!-- Shop Items Section -->
         <TextView

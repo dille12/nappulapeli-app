@@ -321,6 +321,9 @@ class MainActivity : AppCompatActivity() {
 
             "shopUpdate" -> {
                 // Parse next weapon
+
+
+
                 if (json.has("nextWeapon") && !json.isNull("nextWeapon")) {
                     val weaponObj = json.getJSONObject("nextWeapon")
                     nextWeapon = mapOf(
@@ -338,7 +341,9 @@ class MainActivity : AppCompatActivity() {
                 val items = mutableListOf<Map<String, Any?>>()
                 if (itemsArray != null) {
                     for (i in 0 until itemsArray.length()) {
+
                         val itemObj = itemsArray.getJSONObject(i)
+                        Log.d("WS", itemObj.optString("name"))
                         items.add(mapOf(
                             "name" to itemObj.optString("name"),
                             "price" to itemObj.optInt("price", 0),
