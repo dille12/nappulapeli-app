@@ -4,6 +4,9 @@ import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RippleDrawable
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -268,26 +271,39 @@ class ShopFragment : Fragment() {
     }
 
     private fun applyButtonBackground(button: MaterialButton, imageBase64: String?, fallbackColor: Int) {
+        // Always tint the base MaterialButton so its default styling remains when no image is provided
         button.backgroundTintList = ColorStateList.valueOf(fallbackColor)
 
-        if (imageBase64.isNullOrEmpty()) {
-            button.setBackgroundColor(fallbackColor)
-            return
-        }
+        if (imageBase64.isNullOrEmpty()) return
 
         try {
             val imageBytes = Base64.decode(imageBase64, Base64.DEFAULT)
             val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
             if (bitmap != null) {
-                val drawable = BitmapDrawable(resources, bitmap)
-                drawable.alpha = 160
-                button.background = drawable
-            } else {
-                button.setBackgroundColor(fallbackColor)
+                val cornerRadius = (button.cornerRadius.takeIf { it > 0 } ?: dpToPx(12)).toFloat()
+
+                val basePanel = GradientDrawable().apply {
+                    shape = GradientDrawable.RECTANGLE
+                    this.cornerRadius = cornerRadius
+                    setColor(fallbackColor)
+                }
+
+                val pixelArtDrawable = BitmapDrawable(resources, bitmap).apply {
+                    alpha = 180
+                    isFilterBitmap = false
+                    setAntiAlias(false)
+                    setDither(false)
+                    gravity = android.view.Gravity.FILL
+                }
+
+                val layeredBackground = LayerDrawable(arrayOf(basePanel, pixelArtDrawable))
+                val rippleColor = button.rippleColor ?: ColorStateList.valueOf(Color.argb(60, 255, 255, 255))
+                val rippleBackground = RippleDrawable(rippleColor, layeredBackground, basePanel)
+
+                button.background = rippleBackground
             }
         } catch (e: Exception) {
             Log.e("ShopFragment", "Failed to load button background", e)
-            button.setBackgroundColor(fallbackColor)
         }
     }
 
