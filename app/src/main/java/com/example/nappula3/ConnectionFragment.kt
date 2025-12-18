@@ -87,6 +87,13 @@ class ConnectionFragment : Fragment() {
         val ip = ipInput.text.toString().trim()
         persistIp(ip)
         main?.latestIp = ip
+        if (ip.isBlank()) {
+            Log.w("WS", "Skipping connect: IP is blank")
+            statusText.text = "Enter the server IP to connect"
+            nextButton.isEnabled = false
+            retryButton.visibility = View.GONE
+            return
+        }
         Log.d("WS", "Trying to connect to $ip")
         main?.connectWebSocket(ip)
     }
