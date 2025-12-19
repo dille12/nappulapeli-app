@@ -6,12 +6,16 @@ import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
 import android.graphics.Shader
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
@@ -392,13 +396,33 @@ class ShopFragment : Fragment() {
     }
 
 
-    private fun buildItemText(name: String, price: Int, description: String): String {
-        val lines = mutableListOf("$name", "💰 $price Drinks")
-        if (description.isNotBlank()) {
-            lines.add(description)
-        }
-        return lines.joinToString("\n")
+    private fun buildItemText(
+        name: String,
+        price: Int,
+        description: String
+    ): CharSequence {
+
+        val text = SpannableString(
+            buildString {
+                append(name)
+                append("\n💰 $price Drinks")
+                if (description.isNotBlank()) {
+                    append("\n")
+                    append(description)
+                }
+            }
+        )
+
+        text.setSpan(
+            StyleSpan(Typeface.BOLD),
+            0,
+            name.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        return text
     }
+
 
     private fun dpToPx(dp: Int): Int {
         val density = resources.displayMetrics.density
