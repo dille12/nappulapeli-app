@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
     var playerName: String? = null
     var playerImageBase64: String? = null
+    private var pendingAvatarName: String? = null
+    private var pendingAvatarImageBase64: String? = null
 
     val playerStats = mutableMapOf<String, Any>()
 
@@ -162,6 +164,11 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    fun onAvatarSubmitted(name: String, imageBase64: String) {
+        pendingAvatarName = name
+        pendingAvatarImageBase64 = imageBase64
+    }
+
     // Helper function to send JSON
     fun sendJson(json: String) {
         Log.d("WS", "Sending a JSON")
@@ -190,7 +197,9 @@ class MainActivity : AppCompatActivity() {
 
         when (json.optString("type")) {
             "completePawn" -> {
-                val name = json.optString("name")
+                val name = pendingAvatarName ?: json.optString("name")
+                val image = pendingAvatarImageBase64 ?: json.optString("image")
+
                 // Save data
                 playerName = name
                 playerImageBase64 = json.optString("image")

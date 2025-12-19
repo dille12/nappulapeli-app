@@ -155,6 +155,8 @@ class AvatarFragment : Fragment() {
         val imageBytes = baos.toByteArray()
         val base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP)
 
+        (activity as? MainActivity)?.onAvatarSubmitted(name, base64Image)
+
         val json = """
         {
             "type": "avatar",
