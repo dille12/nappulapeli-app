@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.graphics.drawable.RippleDrawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -17,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
@@ -26,7 +28,7 @@ class ShopFragment : Fragment() {
 
     private lateinit var currencyText: TextView
     private lateinit var registerDrinksButton: MaterialButton
-    private lateinit var nextWeaponCard: CardView
+    //private lateinit var nextWeaponCard: CardView
     private lateinit var nextWeaponButton: MaterialButton
     private lateinit var rerollWeaponButton: MaterialButton
     private lateinit var itemsContainer: LinearLayout
@@ -51,7 +53,7 @@ class ShopFragment : Fragment() {
 
         currencyText = view.findViewById(R.id.currencyText)
         registerDrinksButton = view.findViewById(R.id.registerDrinksButton)
-        nextWeaponCard = view.findViewById(R.id.nextWeaponCard)
+        //nextWeaponCard = view.findViewById(R.id.nextWeaponCard)
         nextWeaponButton = view.findViewById(R.id.nextWeaponButton)
         rerollWeaponButton = view.findViewById(R.id.rerollWeaponButton)
         itemsContainer = view.findViewById(R.id.itemsContainer)
@@ -158,9 +160,16 @@ class ShopFragment : Fragment() {
                 else -> Color.parseColor("#FF6B35")
             }
 
+            Log.d("WS", "SETUP IMAGE: $imageBase64")
+            Log.d("WS", "SETUP COLOR: $backgroundColor")
+
+
             nextWeaponButton.text = buildItemText(name, price, description)
 
-            applyButtonBackground(nextWeaponButton, imageBase64, backgroundColor)
+            nextWeaponButton.post {
+                nextWeaponButton.backgroundTintList = null
+                applyButtonBackground(nextWeaponButton, imageBase64, backgroundColor)
+            }
 
             // Set click listener for purchase
             nextWeaponButton.setOnClickListener {
@@ -245,7 +254,6 @@ class ShopFragment : Fragment() {
         val name = item["name"] as? String ?: "Unknown Item"
         val price = item["price"] as? Int ?: 0
         val imageBase64 = (item["image"] as? String)?.takeIf { it.isNotBlank() }
-        Log.d("WS", "IMAGE: $imageBase64")
         val description = item["description"] as? String ?: ""
         val backgroundColor = when (val c = item["backgroundColor"]) {
             is Int -> c
@@ -280,7 +288,9 @@ class ShopFragment : Fragment() {
             backgroundTintList = ColorStateList.valueOf(backgroundColor)
         }
 
-        applyButtonBackground(button, imageBase64, backgroundColor)
+        button.post {
+            applyButtonBackground(button, imageBase64, backgroundColor)
+        }
 
         val canAfford = currentCurrency >= price
         button.isEnabled = canAfford
@@ -300,6 +310,7 @@ class ShopFragment : Fragment() {
         }
     }
 
+    //@RequiresApi(Build.VERSION_CODES.Q)
     private fun applyButtonBackground(
         button: MaterialButton,
         imageBase64: String?,
@@ -308,8 +319,10 @@ class ShopFragment : Fragment() {
         val cornerRadius = (button.cornerRadius.takeIf { it > 0 } ?: dpToPx(12)).toFloat()
         val rippleColor = button.rippleColor
             ?: ColorStateList.valueOf(Color.argb(60, 255, 255, 255))
-
+        Log.d("WS","Creating a button")
+        Log.d("WS", "$imageBase64")
         fun applyBaseBackground() {
+            Log.d("WS", "Falling back to base background!!!")
             val basePanel = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 this.cornerRadius = cornerRadius
@@ -346,16 +359,39 @@ class ShopFragment : Fragment() {
                 setAntiAlias(false)
                 setDither(false)
 
-                // REMOVE colorFilter for now
-                // REMOVE gravity
-
-                setTileModeXY(
-                    Shader.TileMode.CLAMP,
-                    Shader.TileMode.CLAMP
-                )
+                setTint(Color.WHITE)
+                setTintMode(BlendMode.SRC_ATOP)
             }
 
+            val bw = button.width
+            val bh = button.height
+
+            val maxSize = (minOf(bw, bh) * 0.6f).toInt()
+
+            val iw = bitmap.width
+            val ih = bitmap.height
+
+            val scale = minOf(
+                maxSize.toFloat() / iw,
+                maxSize.toFloat() / ih
+            )
+
+            val dw = (iw * scale).toInt()
+            val dh = (ih * scale).toInt()
+
+            val left = (bw - dw) / 2
+            val top = (bh - dh) / 2
+
+            pixelArtDrawable.setBounds(
+                left,
+                top,
+                left + dw,
+                top + dh
+            )
+
+
             val layeredBackground = LayerDrawable(arrayOf(basePanel, pixelArtDrawable))
+
             val rippleBackground = RippleDrawable(rippleColor, layeredBackground, basePanel)
 
             button.backgroundTintList = null
