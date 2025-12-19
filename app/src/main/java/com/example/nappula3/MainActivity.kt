@@ -202,15 +202,12 @@ class MainActivity : AppCompatActivity() {
 
                 // Save data
                 playerName = name
-                playerImageBase64 = image
+                playerImageBase64 = json.optString("image")
 
                 getPreferences(MODE_PRIVATE).edit()
                     .putString(KEY_PLAYER_NAME, playerName)
                     .putString(KEY_PLAYER_IMAGE, playerImageBase64)
                     .apply()
-
-                pendingAvatarName = null
-                pendingAvatarImageBase64 = null
                 val colorArray = json.getJSONArray("teamColor")
                 val r = (colorArray.getInt(0) * 0.25).toInt()
                 val g = (colorArray.getInt(1) * 0.25).toInt()
