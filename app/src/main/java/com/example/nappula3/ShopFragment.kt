@@ -360,7 +360,7 @@ class ShopFragment : Fragment() {
                 setDither(false)
 
                 setTint(Color.WHITE)
-                setTintMode(BlendMode.SRC_ATOP)
+                //setTintMode(BlendMode.SRC_ATOP)
             }
 
             val bw = button.width
