@@ -373,6 +373,7 @@ class GameFragment : Fragment() {
             Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
 
             if (success) {
+                shopFragment?.markItemOwned(itemName)
                 // Refresh shop data after successful purchase
                 val main = activity as? MainActivity
                 val currency = cachedPlayerStats["Currency"] as? Int ?: 0

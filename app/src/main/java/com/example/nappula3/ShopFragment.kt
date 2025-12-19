@@ -36,6 +36,9 @@ class ShopFragment : Fragment() {
     private lateinit var nextWeaponButton: MaterialButton
     private lateinit var rerollWeaponButton: MaterialButton
     private lateinit var itemsContainer: LinearLayout
+    private val itemButtons = mutableMapOf<String, MaterialButton>()
+    private val ownedItems = mutableSetOf<String>()
+    private var ownedWeaponName: String? = null
 
     private var currentCurrency: Int = 0
     private var nextWeapon: Map<String, Any?>? = null
@@ -167,8 +170,12 @@ class ShopFragment : Fragment() {
             Log.d("WS", "SETUP IMAGE: $imageBase64")
             Log.d("WS", "SETUP COLOR: $backgroundColor")
 
-
-            nextWeaponButton.text = buildItemText(name, price, description)
+            val isOwned = ownedWeaponName == name
+            nextWeaponButton.text = if (isOwned) {
+                "OWNED"
+            } else {
+                buildItemText(name, price, description)
+            }
 
             nextWeaponButton.post {
                 nextWeaponButton.backgroundTintList = null
@@ -177,11 +184,13 @@ class ShopFragment : Fragment() {
 
             // Set click listener for purchase
             nextWeaponButton.setOnClickListener {
-                requestWeaponPurchase()
+                if (!isOwned) {
+                    requestWeaponPurchase()
+                }
             }
 
             // Enable/disable based on affordability
-            val canAfford = currentCurrency >= price
+            val canAfford = currentCurrency >= price && !isOwned
             nextWeaponButton.isEnabled = canAfford
             nextWeaponButton.alpha = if (canAfford) 1.0f else 0.6f
 
@@ -214,6 +223,7 @@ class ShopFragment : Fragment() {
 
     private fun setupShopItems() {
         itemsContainer.removeAllViews()
+        itemButtons.clear()
 
         if (shopItems.isEmpty()) {
             val emptyText = TextView(requireContext()).apply {
@@ -296,14 +306,19 @@ class ShopFragment : Fragment() {
             applyButtonBackground(button, imageBase64, backgroundColor)
         }
 
-        val canAfford = currentCurrency >= price
+        val isOwned = ownedItems.contains(name)
+        val canAfford = currentCurrency >= price && !isOwned
+        button.text = if (isOwned) "OWNED" else buildItemText(name, price, description)
         button.isEnabled = canAfford
         button.alpha = if (canAfford) 1.0f else 0.6f
 
         button.setOnClickListener {
-            requestItemPurchase(name)
+            if (!isOwned) {
+                requestItemPurchase(name)
+            }
         }
 
+        itemButtons[name] = button
         return button
     }
 
@@ -480,6 +495,16 @@ class ShopFragment : Fragment() {
         this.shopItems = items
         this.rerollCost = rerollCost
 
+        // Reset owned weapon state if a new weapon appears
+        val nextWeaponName = nextWeapon?.get("name") as? String
+        if (ownedWeaponName != null && ownedWeaponName != nextWeaponName) {
+            ownedWeaponName = null
+        }
+
+        // Keep owned items only for items still present in the shop
+        val currentItemNames = items.mapNotNull { it["name"] as? String }.toSet()
+        ownedItems.retainAll(currentItemNames)
+
         populateShop()
     }
 
@@ -492,6 +517,26 @@ class ShopFragment : Fragment() {
 
         // Update affordability of items
         populateShop()
+    }
+
+    fun markItemOwned(itemName: String) {
+        if (!isAdded) return
+
+        val weaponName = nextWeapon?.get("name") as? String
+        if (weaponName == itemName) {
+            ownedWeaponName = itemName
+            nextWeaponButton.text = "OWNED"
+            nextWeaponButton.isEnabled = false
+            nextWeaponButton.alpha = 0.6f
+            return
+        }
+
+        ownedItems.add(itemName)
+        itemButtons[itemName]?.let { button ->
+            button.text = "OWNED"
+            button.isEnabled = false
+            button.alpha = 0.6f
+        }
     }
 
     override fun onResume() {
