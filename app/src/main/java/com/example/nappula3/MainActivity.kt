@@ -334,6 +334,7 @@ class MainActivity : AppCompatActivity() {
                         "name" to weaponObj.optString("name"),
                         "price" to weaponObj.optInt("price", 0),
                         "image" to weaponObj.optString("image"),
+                        "description" to weaponObj.optString("description", ""),
                         "backgroundColor" to parseColorValue(weaponObj.opt("backgroundColor"))
                     )
                 } else {

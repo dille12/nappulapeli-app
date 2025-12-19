@@ -142,9 +142,10 @@ class ShopFragment : Fragment() {
             val name = weapon["name"] as? String ?: "Unknown Weapon"
             val price = weapon["price"] as? Int ?: 0
             val imageBase64 = weapon["image"] as? String
+            val description = weapon["description"] as? String ?: ""
             val backgroundColor = weapon["backgroundColor"] as? Int ?: Color.parseColor("#FF6B35")
 
-            nextWeaponButton.text = "$name\n💰 $price Drinks"
+            nextWeaponButton.text = buildItemText(name, price, description)
 
             applyButtonBackground(nextWeaponButton, imageBase64, backgroundColor)
 
@@ -278,16 +279,34 @@ class ShopFragment : Fragment() {
         imageBase64: String?,
         fallbackColor: Int
     ) {
+        val cornerRadius = (button.cornerRadius.takeIf { it > 0 } ?: dpToPx(12)).toFloat()
+        val rippleColor = button.rippleColor
+            ?: ColorStateList.valueOf(Color.argb(60, 255, 255, 255))
+
+        fun applyBaseBackground() {
+            val basePanel = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                this.cornerRadius = cornerRadius
+                setColor(fallbackColor)
+            }
+
+            val rippleBackground = RippleDrawable(rippleColor, basePanel, basePanel)
+            button.backgroundTintList = null
+            button.background = rippleBackground
+        }
+
         if (imageBase64.isNullOrEmpty()) {
-            button.backgroundTintList = ColorStateList.valueOf(fallbackColor)
+            applyBaseBackground()
             return
         }
 
         try {
             val imageBytes = Base64.decode(imageBase64, Base64.DEFAULT)
-            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size) ?: return
-
-            val cornerRadius = (button.cornerRadius.takeIf { it > 0 } ?: dpToPx(12)).toFloat()
+            val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            if (bitmap == null) {
+                applyBaseBackground()
+                return
+            }
 
             val basePanel = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
@@ -308,12 +327,7 @@ class ShopFragment : Fragment() {
                 )
             }
 
-
             val layeredBackground = LayerDrawable(arrayOf(basePanel, pixelArtDrawable))
-
-            val rippleColor = button.rippleColor
-                ?: ColorStateList.valueOf(Color.argb(60, 255, 255, 255))
-
             val rippleBackground = RippleDrawable(rippleColor, layeredBackground, basePanel)
 
             button.backgroundTintList = null
@@ -321,6 +335,7 @@ class ShopFragment : Fragment() {
 
         } catch (e: Exception) {
             Log.e("ShopFragment", "Failed to load button background", e)
+            applyBaseBackground()
         }
     }
 
