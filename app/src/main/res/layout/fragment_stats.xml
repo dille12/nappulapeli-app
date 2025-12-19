@@ -16,7 +16,8 @@
             android:textStyle="bold"
             android:paddingStart="16dp"
             android:paddingTop="16dp"
-            android:paddingEnd="16dp" />
+            android:paddingEnd="16dp"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/gamemodeInfo"
