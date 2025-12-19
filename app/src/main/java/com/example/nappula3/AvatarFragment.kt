@@ -134,6 +134,7 @@ class AvatarFragment : Fragment() {
         (activity as? MainActivity)?.sendJson(json)
 
         parentFragmentManager.beginTransaction()
+            .applyFadeAnimations()
             .replace(R.id.fragment_container, WaitingFragment())
             .addToBackStack(null)
             .commit()

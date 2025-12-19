@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
+                .applyFadeAnimations()
                 .replace(R.id.fragment_container, ConnectionFragment())
                 .commit()
         }
@@ -122,6 +123,7 @@ class MainActivity : AppCompatActivity() {
                         fragment.onConnectionFailed()
                     } else {
                         supportFragmentManager.beginTransaction()
+                            .applyFadeAnimations()
                             .replace(R.id.fragment_container, ConnectionFragment.newInstance(latestIp))
                             .runOnCommit {
                                 val connectionFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
@@ -142,6 +144,7 @@ class MainActivity : AppCompatActivity() {
                         fragment.onConnectionFailed()
                     } else {
                         supportFragmentManager.beginTransaction()
+                            .applyFadeAnimations()
                             .replace(R.id.fragment_container, ConnectionFragment.newInstance(latestIp))
                             .runOnCommit {
                                 val connectionFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
@@ -207,6 +210,7 @@ class MainActivity : AppCompatActivity() {
 
                     // Transition to GameFragment
                     supportFragmentManager.beginTransaction()
+                        .applyFadeAnimations()
                         .replace(R.id.fragment_container, fragment)
                         .commit()
                 }
