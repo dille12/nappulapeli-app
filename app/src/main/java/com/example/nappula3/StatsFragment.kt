@@ -11,11 +11,13 @@ import androidx.fragment.app.Fragment
 class StatsFragment : Fragment() {
 
     private var playerStats: Map<String, Any> = emptyMap()
+    private var gamemodeInfo: String? = null
 
     companion object {
-        fun newInstance(stats: Map<String, Any>): StatsFragment {
+        fun newInstance(stats: Map<String, Any>, gamemodeInfo: String?): StatsFragment {
             return StatsFragment().apply {
                 playerStats = stats
+                this.gamemodeInfo = gamemodeInfo
             }
         }
     }
@@ -27,7 +29,10 @@ class StatsFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_stats, container, false)
 
+        val gamemodeText: TextView = view.findViewById(R.id.gamemodeInfo)
         val statsContainer: LinearLayout = view.findViewById(R.id.statsContainer)
+
+        updateGamemodeText(gamemodeText)
 
         // Clear any existing views
         statsContainer.removeAllViews()
@@ -48,6 +53,15 @@ class StatsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun updateGamemodeText(gamemodeText: TextView) {
+        if (gamemodeInfo.isNullOrBlank()) {
+            gamemodeText.visibility = View.GONE
+        } else {
+            gamemodeText.visibility = View.VISIBLE
+            gamemodeText.text = gamemodeInfo
+        }
     }
 
     private fun createStatView(label: String, value: String): View {
@@ -93,6 +107,13 @@ class StatsFragment : Fragment() {
                     statsContainer.addView(statView)
                 }
             }
+        }
+    }
+
+    fun updateGamemodeInfo(info: String?) {
+        gamemodeInfo = info
+        view?.findViewById<TextView>(R.id.gamemodeInfo)?.let { gamemodeText ->
+            updateGamemodeText(gamemodeText)
         }
     }
 }

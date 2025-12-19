@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     var pendingLevelUp: Boolean? = false
 
     var latestHudLines: List<Map<String, Any>> = listOf()
+    var gamemodeInfo: String? = null
 
     var webSocket: WebSocket? = null
     private val client = OkHttpClient()
@@ -281,6 +282,16 @@ class MainActivity : AppCompatActivity() {
                 val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
                 if (fragment is GameFragment) {
                     fragment.updateHudData(hudLines)
+                }
+            }
+
+            "gamemodeInfo" -> {
+                val infoText = json.optString("text", "").ifBlank { null }
+                gamemodeInfo = infoText
+
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateGamemodeInfo(infoText)
                 }
             }
 
