@@ -2,8 +2,10 @@ package com.example.nappula3
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
@@ -54,6 +56,8 @@ class AvatarFragment : Fragment() {
         nextButton.isEnabled = false
         flipButton.isEnabled = false
 
+        preloadSavedAvatar()
+
         selectButton.setOnClickListener {
             val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(gallery, PICK_IMAGE)
@@ -76,9 +80,37 @@ class AvatarFragment : Fragment() {
         }
         infoButton.setOnClickListener {
             showInfoDialog()
-        }
+        } 
 
         return view
+    }
+
+    private fun preloadSavedAvatar() {
+        val prefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val savedName = prefs.getString(MainActivity.KEY_PLAYER_NAME, null)
+        val savedImage = prefs.getString(MainActivity.KEY_PLAYER_IMAGE, null)
+
+        if (!savedName.isNullOrBlank()) {
+            nameInput.setText(savedName)
+        }
+
+        if (!savedImage.isNullOrBlank()) {
+            try {
+                val imageBytes = Base64.decode(savedImage, Base64.DEFAULT)
+                val decodedBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                val compressedBitmap = compressBitmap(decodedBitmap)
+
+                originalBitmap = compressedBitmap
+                displayBitmap = compressedBitmap
+                isFlipped = false
+                avatarImage.setImageBitmap(compressedBitmap)
+                flipButton.isEnabled = true
+            } catch (e: IllegalArgumentException) {
+                // Ignore invalid base64 data
+            }
+        }
+
+        checkNextEnabled()
     }
 
     private fun compressBitmap(bitmap: Bitmap): Bitmap {
@@ -122,6 +154,8 @@ class AvatarFragment : Fragment() {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val imageBytes = baos.toByteArray()
         val base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP)
+
+        (activity as? MainActivity)?.onAvatarSubmitted(name, base64Image)
 
         val json = """
         {

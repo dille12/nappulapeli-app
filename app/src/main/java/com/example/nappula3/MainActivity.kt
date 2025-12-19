@@ -19,10 +19,14 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val KEY_LATEST_IP = "latest_ip"
+        const val KEY_PLAYER_NAME = "player_name"
+        const val KEY_PLAYER_IMAGE = "player_image"
     }
 
     var playerName: String? = null
     var playerImageBase64: String? = null
+    private var pendingAvatarName: String? = null
+    private var pendingAvatarImageBase64: String? = null
 
     val playerStats = mutableMapOf<String, Any>()
 
@@ -160,6 +164,11 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    fun onAvatarSubmitted(name: String, imageBase64: String) {
+        pendingAvatarName = name
+        pendingAvatarImageBase64 = imageBase64
+    }
+
     // Helper function to send JSON
     fun sendJson(json: String) {
         Log.d("WS", "Sending a JSON")
@@ -188,10 +197,20 @@ class MainActivity : AppCompatActivity() {
 
         when (json.optString("type")) {
             "completePawn" -> {
-                val name = json.optString("name")
+                val name = pendingAvatarName ?: json.optString("name")
+                val image = pendingAvatarImageBase64 ?: json.optString("image")
+
                 // Save data
                 playerName = name
-                playerImageBase64 = json.optString("image")
+                playerImageBase64 = image
+
+                getPreferences(MODE_PRIVATE).edit()
+                    .putString(KEY_PLAYER_NAME, playerName)
+                    .putString(KEY_PLAYER_IMAGE, playerImageBase64)
+                    .apply()
+
+                pendingAvatarName = null
+                pendingAvatarImageBase64 = null
                 val colorArray = json.getJSONArray("teamColor")
                 val r = (colorArray.getInt(0) * 0.25).toInt()
                 val g = (colorArray.getInt(1) * 0.25).toInt()
