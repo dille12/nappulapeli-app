@@ -35,6 +35,7 @@ class GameFragment : Fragment() {
     private var hudFragment: HUDFragment? = null
     private var levelUpFragment: LevelUpFragment? = null
     private var shopFragment: ShopFragment? = null
+    private var statsFragment: StatsFragment? = null
     private var currentBottomFragment: Fragment? = null
 
     // Cache data to prevent loss on view recreation
@@ -42,6 +43,7 @@ class GameFragment : Fragment() {
     private var cachedBase64Image: String? = null
     private var cachedPlayerStats: MutableMap<String, Any> = mutableMapOf()
     private var cachedBgColor: Int = Color.WHITE
+    private var cachedGamemodeInfo: String? = null
 
     companion object {
         private const val ARG_BG_COLOR = "bgColor"
@@ -63,6 +65,7 @@ class GameFragment : Fragment() {
             cachedPlayerName = bundle.getString("cached_player_name")
             cachedBase64Image = bundle.getString("cached_base64_image")
             cachedBgColor = bundle.getInt("cached_bg_color", Color.WHITE)
+            cachedGamemodeInfo = bundle.getString("cached_gamemode_info")
 
             // Restore player stats
             val statsSize = bundle.getInt("stats_size", 0)
@@ -83,6 +86,7 @@ class GameFragment : Fragment() {
         outState.putString("cached_player_name", cachedPlayerName)
         outState.putString("cached_base64_image", cachedBase64Image)
         outState.putInt("cached_bg_color", cachedBgColor)
+        outState.putString("cached_gamemode_info", cachedGamemodeInfo)
 
         // Save player stats
         outState.putInt("stats_size", cachedPlayerStats.size)
@@ -127,6 +131,7 @@ class GameFragment : Fragment() {
         hudFragment = null
         levelUpFragment = null
         shopFragment = null
+        statsFragment = null
         currentBottomFragment = null
     }
 
@@ -316,12 +321,17 @@ class GameFragment : Fragment() {
     }
 
     private fun showStatsFragment() {
-        // For now, show a placeholder or you could create a different stats view
-        val statsFragment = StatsFragment.newInstance(cachedPlayerStats)
+        if (statsFragment == null) {
+            statsFragment = StatsFragment.newInstance(cachedPlayerStats, cachedGamemodeInfo)
+        } else {
+            statsFragment?.updateStats(cachedPlayerStats)
+            statsFragment?.updateGamemodeInfo(cachedGamemodeInfo)
+        }
+
         currentBottomFragment = statsFragment
         childFragmentManager.beginTransaction()
             .applyFadeAnimations()
-            .replace(R.id.bottomPanelContainer, statsFragment)
+            .replace(R.id.bottomPanelContainer, statsFragment!!)
             .commit()
     }
 
@@ -478,6 +488,7 @@ class GameFragment : Fragment() {
             cachedPlayerName = main.playerName ?: cachedPlayerName
             cachedBase64Image = main.playerImageBase64 ?: cachedBase64Image
             cachedPlayerStats.putAll(main.playerStats)
+            cachedGamemodeInfo = main.gamemodeInfo ?: cachedGamemodeInfo
         }
 
         // Get background color from arguments
@@ -516,11 +527,19 @@ class GameFragment : Fragment() {
         // Update display
         updateStatsDisplay(playerStats)
 
+        // Update stats tab if visible
+        statsFragment?.updateStats(cachedPlayerStats)
+
         // Update shop currency if shop is visible
         val currency = playerStats["Currency"] as? Int
         if (currency != null) {
             shopFragment?.updateCurrency(currency)
         }
+    }
+
+    fun updateGamemodeInfo(info: String?) {
+        cachedGamemodeInfo = info
+        statsFragment?.updateGamemodeInfo(info)
     }
 
     @SuppressLint("SetTextI18n")
