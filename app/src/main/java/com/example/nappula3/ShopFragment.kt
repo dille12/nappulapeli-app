@@ -353,44 +353,32 @@ class ShopFragment : Fragment() {
                 setColor(fallbackColor)
             }
 
-            val pixelArtDrawable = BitmapDrawable(resources, bitmap).apply {
-                alpha = 180
-                isFilterBitmap = false
-                setAntiAlias(false)
-                setDither(false)
 
-                setTint(Color.WHITE)
-                //setTintMode(BlendMode.SRC_ATOP)
-            }
 
             val bw = button.width
             val bh = button.height
 
-            val maxSize = (minOf(bw, bh) * 0.6f).toInt()
+            val confineW = (bw*0.6f).toFloat()
+            val confineH = (bh*0.6f).toFloat()
+            //val maxSizeW = (minOf(bw, bh) * 0.6f).toInt()
 
             val iw = bitmap.width
             val ih = bitmap.height
-
-            val scale = minOf(
-                maxSize.toFloat() / iw,
-                maxSize.toFloat() / ih
-            )
-
+            val scale = minOf(confineW / iw, confineH / ih)
             val dw = (iw * scale).toInt()
             val dh = (ih * scale).toInt()
 
-            val left = (bw - dw) / 2
-            val top = (bh - dh) / 2
+            val scaledBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, dw, dh, false)
+            val scaledDrawable = BitmapDrawable(resources, scaledBitmap).apply {
+                alpha = 180
+                isFilterBitmap = false
+                setAntiAlias(false)
+                setDither(false)
+                setTint(Color.BLACK)
+                gravity = android.view.Gravity.CENTER
+            }
 
-            pixelArtDrawable.setBounds(
-                left,
-                top,
-                left + dw,
-                top + dh
-            )
-
-
-            val layeredBackground = LayerDrawable(arrayOf(basePanel, pixelArtDrawable))
+            val layeredBackground = LayerDrawable(arrayOf(basePanel, scaledDrawable))
 
             val rippleBackground = RippleDrawable(rippleColor, layeredBackground, basePanel)
 
