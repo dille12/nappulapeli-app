@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val KEY_LATEST_IP = "latest_ip"
+        const val KEY_PLAYER_NAME = "player_name"
+        const val KEY_PLAYER_IMAGE = "player_image"
     }
 
     var playerName: String? = null
@@ -192,6 +194,11 @@ class MainActivity : AppCompatActivity() {
                 // Save data
                 playerName = name
                 playerImageBase64 = json.optString("image")
+
+                getPreferences(MODE_PRIVATE).edit()
+                    .putString(KEY_PLAYER_NAME, playerName)
+                    .putString(KEY_PLAYER_IMAGE, playerImageBase64)
+                    .apply()
                 val colorArray = json.getJSONArray("teamColor")
                 val r = (colorArray.getInt(0) * 0.25).toInt()
                 val g = (colorArray.getInt(1) * 0.25).toInt()
