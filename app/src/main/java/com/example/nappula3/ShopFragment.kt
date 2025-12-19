@@ -37,9 +37,6 @@ class ShopFragment : Fragment() {
     private lateinit var rerollWeaponButton: MaterialButton
     private lateinit var itemsContainer: LinearLayout
     private val itemButtons = mutableMapOf<String, MaterialButton>()
-    private val ownedItems = mutableSetOf<String>()
-    private var ownedWeaponName: String? = null
-
     private var currentCurrency: Int = 0
     private var nextWeapon: Map<String, Any?>? = null
     private var shopItems: List<Map<String, Any?>> = emptyList()
@@ -170,7 +167,7 @@ class ShopFragment : Fragment() {
             Log.d("WS", "SETUP IMAGE: $imageBase64")
             Log.d("WS", "SETUP COLOR: $backgroundColor")
 
-            val isOwned = ownedWeaponName == name
+            val isOwned = (weapon["owned"] as? Boolean) == true
             nextWeaponButton.text = if (isOwned) {
                 "OWNED"
             } else {
@@ -306,7 +303,7 @@ class ShopFragment : Fragment() {
             applyButtonBackground(button, imageBase64, backgroundColor)
         }
 
-        val isOwned = ownedItems.contains(name)
+        val isOwned = (item["owned"] as? Boolean) == true
         val canAfford = currentCurrency >= price && !isOwned
         button.text = if (isOwned) "OWNED" else buildItemText(name, price, description)
         button.isEnabled = canAfford
@@ -495,16 +492,6 @@ class ShopFragment : Fragment() {
         this.shopItems = items
         this.rerollCost = rerollCost
 
-        // Reset owned weapon state if a new weapon appears
-        val nextWeaponName = nextWeapon?.get("name") as? String
-        if (ownedWeaponName != null && ownedWeaponName != nextWeaponName) {
-            ownedWeaponName = null
-        }
-
-        // Keep owned items only for items still present in the shop
-        val currentItemNames = items.mapNotNull { it["name"] as? String }.toSet()
-        ownedItems.retainAll(currentItemNames)
-
         populateShop()
     }
 
@@ -524,19 +511,19 @@ class ShopFragment : Fragment() {
 
         val weaponName = nextWeapon?.get("name") as? String
         if (weaponName == itemName) {
-            ownedWeaponName = itemName
-            nextWeaponButton.text = "OWNED"
-            nextWeaponButton.isEnabled = false
-            nextWeaponButton.alpha = 0.6f
+            nextWeapon = nextWeapon?.toMutableMap()?.apply { this["owned"] = true }
+            populateShop()
             return
         }
 
-        ownedItems.add(itemName)
-        itemButtons[itemName]?.let { button ->
-            button.text = "OWNED"
-            button.isEnabled = false
-            button.alpha = 0.6f
+        shopItems = shopItems.map { item ->
+            if ((item["name"] as? String) == itemName) {
+                item.toMutableMap().apply { this["owned"] = true }
+            } else {
+                item
+            }
         }
+        populateShop()
     }
 
     override fun onResume() {

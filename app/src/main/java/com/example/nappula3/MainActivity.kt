@@ -350,7 +350,8 @@ class MainActivity : AppCompatActivity() {
                         "price" to weaponObj.optInt("price", 0),
                         "image" to weaponObj.optString("image"),
                         "description" to weaponObj.optString("description", ""),
-                        "backgroundColor" to parseColorValue(weaponObj.opt("backgroundColor"))
+                        "backgroundColor" to parseColorValue(weaponObj.opt("backgroundColor")),
+                        "owned" to weaponObj.optBoolean("owned", false)
                     )
                 } else {
                     nextWeapon = null
@@ -372,7 +373,8 @@ class MainActivity : AppCompatActivity() {
                             "price" to itemObj.optInt("price", 0),
                             "image" to itemObj.optString("image"),
                             "description" to itemObj.optString("description", ""),
-                            "backgroundColor" to parseColorValue(itemObj.opt("backgroundColor"))
+                            "backgroundColor" to parseColorValue(itemObj.opt("backgroundColor")),
+                            "owned" to itemObj.optBoolean("owned", false)
                         ))
                     }
                 }
