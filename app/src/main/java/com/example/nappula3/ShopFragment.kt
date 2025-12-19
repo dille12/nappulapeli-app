@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.BlendMode
 import android.graphics.BlendModeColorFilter
 import android.graphics.Color
+import android.graphics.Shader
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
@@ -143,7 +144,19 @@ class ShopFragment : Fragment() {
             val price = weapon["price"] as? Int ?: 0
             val imageBase64 = weapon["image"] as? String
             val description = weapon["description"] as? String ?: ""
-            val backgroundColor = weapon["backgroundColor"] as? Int ?: Color.parseColor("#FF6B35")
+            val backgroundColor = when (val c = weapon["backgroundColor"]) {
+                is Int -> c
+                is Double -> c.toInt()
+                is String -> {
+                    try {
+                        if (c.startsWith("#")) Color.parseColor(c)
+                        else c.toInt()
+                    } catch (_: Exception) {
+                        Color.parseColor("#FF6B35")
+                    }
+                }
+                else -> Color.parseColor("#FF6B35")
+            }
 
             nextWeaponButton.text = buildItemText(name, price, description)
 
@@ -232,8 +245,21 @@ class ShopFragment : Fragment() {
         val name = item["name"] as? String ?: "Unknown Item"
         val price = item["price"] as? Int ?: 0
         val imageBase64 = (item["image"] as? String)?.takeIf { it.isNotBlank() }
+        Log.d("WS", "IMAGE: $imageBase64")
         val description = item["description"] as? String ?: ""
-        val backgroundColor = item["backgroundColor"] as? Int ?: Color.argb(200, 45, 45, 45)
+        val backgroundColor = when (val c = item["backgroundColor"]) {
+            is Int -> c
+            is Double -> c.toInt()
+            is String -> {
+                try {
+                    if (c.startsWith("#")) Color.parseColor(c)
+                    else c.toInt()
+                } catch (_: Exception) {
+                    Color.parseColor("#FF6B35")
+                }
+            }
+            else -> Color.parseColor("#FF6B35")
+        }
 
         val button = MaterialButton(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(0, dpToPx(120), 1f).apply {
@@ -319,11 +345,13 @@ class ShopFragment : Fragment() {
                 isFilterBitmap = false
                 setAntiAlias(false)
                 setDither(false)
-                gravity = android.view.Gravity.FILL
 
-                colorFilter = BlendModeColorFilter(
-                    Color.WHITE,
-                    BlendMode.SRC_IN
+                // REMOVE colorFilter for now
+                // REMOVE gravity
+
+                setTileModeXY(
+                    Shader.TileMode.CLAMP,
+                    Shader.TileMode.CLAMP
                 )
             }
 

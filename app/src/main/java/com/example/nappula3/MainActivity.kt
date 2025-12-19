@@ -341,6 +341,9 @@ class MainActivity : AppCompatActivity() {
                     nextWeapon = null
                 }
 
+                Log.d("WS", "Updated shop data - Next weapon: $nextWeapon")
+
+
                 // Parse shop items
                 val itemsArray = json.optJSONArray("items")
                 val items = mutableListOf<Map<String, Any?>>()
