@@ -69,6 +69,7 @@ class ConnectionFragment : Fragment() {
         // Next button navigates to AvatarFragment
         nextButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
+                .applyFadeAnimations()
                 .replace(R.id.fragment_container, AvatarFragment())
                 .addToBackStack(null)
                 .commit()

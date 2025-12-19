@@ -267,6 +267,7 @@ class GameFragment : Fragment() {
 
         currentBottomFragment = hudFragment
         childFragmentManager.beginTransaction()
+            .applyFadeAnimations()
             .replace(R.id.bottomPanelContainer, hudFragment!!)
             .commit()
     }
@@ -285,6 +286,7 @@ class GameFragment : Fragment() {
 
         currentBottomFragment = levelUpFragment
         childFragmentManager.beginTransaction()
+            .applyFadeAnimations()
             .replace(R.id.bottomPanelContainer, levelUpFragment!!)
             .commit()
     }
@@ -308,6 +310,7 @@ class GameFragment : Fragment() {
 
         currentBottomFragment = shopFragment
         childFragmentManager.beginTransaction()
+            .applyFadeAnimations()
             .replace(R.id.bottomPanelContainer, shopFragment!!)
             .commit()
     }
@@ -317,6 +320,7 @@ class GameFragment : Fragment() {
         val statsFragment = StatsFragment.newInstance(cachedPlayerStats)
         currentBottomFragment = statsFragment
         childFragmentManager.beginTransaction()
+            .applyFadeAnimations()
             .replace(R.id.bottomPanelContainer, statsFragment)
             .commit()
     }

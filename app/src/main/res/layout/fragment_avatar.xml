@@ -1,68 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@drawable/fragment_background"
+    android:padding="24dp">
 
-    <TextView
-        android:id="@+id/instructionText"
-        android:text="Enter your name and select an avatar:"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
-
-    <EditText
-        android:id="@+id/nameInput"
-        android:hint="Player Name"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:padding="16dp"
+        app:cardBackgroundColor="@color/card_surface"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="10dp">
 
-    <ImageView
-        android:id="@+id/avatarImage"
-        android:src="@android:drawable/ic_menu_gallery"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="16dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/infoButton"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:text="?"
-        android:textSize="14sp"
-        android:background="@android:drawable/btn_default" />
+            <View
+                android:layout_width="72dp"
+                android:layout_height="4dp"
+                android:layout_marginBottom="16dp"
+                android:background="@color/accent_orange"
+                android:alpha="0.9" />
 
-    <TextView
-        android:id="@+id/directionText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="← Varmista et kuva osottaa VASEMMALLE. Muuten oot vitun pässi."
-        android:textStyle="bold"
-        android:textColor="#FF6600"
-        android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="Suit up your avatar"
+                android:textColor="@color/text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/selectImageButton"
-        android:text="Select Image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"/>
+            <TextView
+                android:id="@+id/instructionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="Enter your name and select an avatar:"
+                android:textAlignment="center"
+                android:textColor="@color/primary_dark"
+                android:textSize="16sp"
+                tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/flipButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Flip"
-        android:enabled="false" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Player Name"
+                app:boxBackgroundMode="filled"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp">
 
-    <Button
-        android:id="@+id/nextButton"
-        android:text="Next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:enabled="false"/>
-</LinearLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/nameInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/avatarImage"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginVertical="16dp"
+                android:background="@android:color/white"
+                android:padding="8dp"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery" />
+
+            <TextView
+                android:id="@+id/directionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:padding="8dp"
+                android:text="← Varmista et kuva osottaa VASEMMALLE. Muuten oot vitun pässi."
+                android:textAlignment="center"
+                android:textColor="#FF6600"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
+
+                <Button
+                    android:id="@+id/selectImageButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:text="Select Image" />
+
+                <Button
+                    android:id="@+id/infoButton"
+                    android:layout_width="56dp"
+                    android:layout_height="wrap_content"
+                    android:text="?"
+                    android:textSize="14sp"
+                    android:background="@android:drawable/btn_default" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
+
+                <Button
+                    android:id="@+id/flipButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="Flip" />
+
+                <Button
+                    android:id="@+id/nextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:enabled="false"
+                    android:text="Next" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</ScrollView>
