@@ -5,14 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@drawable/fragment_background"
+    android:background="@color/black"
     android:padding="24dp">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        app:cardBackgroundColor="@color/card_surface"
+        app:cardBackgroundColor="@color/black"
+        app:strokeColor="@color/avatar_blue"
+        app:strokeWidth="2dp"
         app:cardCornerRadius="18dp"
         app:cardElevation="10dp">
 
@@ -27,7 +29,7 @@
                 android:layout_width="72dp"
                 android:layout_height="4dp"
                 android:layout_marginBottom="16dp"
-                android:background="@color/accent_orange"
+                android:background="@color/avatar_blue"
                 android:alpha="0.9" />
 
             <TextView
@@ -35,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="Suit up your avatar"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/avatar_blue"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -47,7 +49,7 @@
                 android:layout_marginBottom="16dp"
                 android:text="Enter your name and select an avatar:"
                 android:textAlignment="center"
-                android:textColor="@color/primary_dark"
+                android:textColor="@color/avatar_blue"
                 android:textSize="16sp"
                 tools:ignore="HardcodedText" />
 
@@ -56,17 +58,21 @@
                 android:layout_height="wrap_content"
                 android:hint="Player Name"
                 app:boxBackgroundMode="filled"
+                app:boxBackgroundColor="@color/black"
                 app:boxCornerRadiusTopStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp">
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxStrokeColor="@color/avatar_blue"
+                app:hintTextColor="@color/white">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/nameInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/white" />
+                    android:textColorHint="@color/white"
+                    android:backgroundTint="@color/avatar_blue" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
@@ -74,7 +80,8 @@
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginVertical="16dp"
-                android:background="@android:color/white"
+                android:background="@color/black"
+                android:contentDescription="Avatar preview"
                 android:padding="8dp"
                 android:scaleType="centerCrop"
                 android:src="@android:drawable/ic_menu_gallery" />
@@ -87,7 +94,7 @@
                 android:padding="8dp"
                 android:text="← Varmista et kuva osottaa VASEMMALLE. Muuten oot vitun pässi."
                 android:textAlignment="center"
-                android:textColor="#FF6600"
+                android:textColor="@color/avatar_blue"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -103,15 +110,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    android:text="Select Image" />
+                    android:backgroundTint="@color/avatar_blue"
+                    android:text="Select Image"
+                    android:textColor="@color/white" />
 
                 <Button
                     android:id="@+id/infoButton"
                     android:layout_width="56dp"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/avatar_blue"
                     android:text="?"
-                    android:textSize="14sp"
-                    android:background="@android:drawable/btn_default" />
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -127,16 +137,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/avatar_blue"
                     android:enabled="false"
-                    android:text="Flip" />
+                    android:text="Flip"
+                    android:textColor="@color/white" />
 
                 <Button
                     android:id="@+id/nextButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/avatar_blue"
                     android:enabled="false"
-                    android:text="Next" />
+                    android:text="Next"
+                    android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
