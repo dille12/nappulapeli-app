@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     var latestHudLines: List<Map<String, Any>> = listOf()
     var gamemodeInfo: String? = null
+    var equipmentImages: List<String> = emptyList()
 
     var webSocket: WebSocket? = null
     private val client = OkHttpClient()
@@ -460,6 +461,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+            "equipmentImages", "equipmentUpdate", "equipment" -> {
+                val images = parseEquipmentImages(json)
+                equipmentImages = images
+
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateEquipmentImages(images)
+                }
+            }
+
             "ult_ready" -> {
                 // Dispatch to WaitingFragment or GameFragment if needed
             }
@@ -503,5 +514,36 @@ class MainActivity : AppCompatActivity() {
             }
             else -> null
         }
+    }
+
+    private fun parseEquipmentImages(json: JSONObject): List<String> {
+        val images = mutableListOf<String>()
+        val imagesArray = json.optJSONArray("images")
+        if (imagesArray != null) {
+            for (i in 0 until imagesArray.length()) {
+                val item = imagesArray.opt(i)
+                val image = when (item) {
+                    is String -> item
+                    is JSONObject -> item.optString("image")
+                    else -> ""
+                }.trim()
+                if (image.isNotEmpty()) {
+                    images.add(image)
+                }
+            }
+        }
+
+        if (images.isEmpty()) {
+            val weapon = json.optString("weapon", "").trim()
+            val dualWield = json.optString("dualWield", "").trim()
+            val grenade = json.optString("grenade", "").trim()
+            listOf(weapon, dualWield, grenade).forEach { image ->
+                if (image.isNotEmpty()) {
+                    images.add(image)
+                }
+            }
+        }
+
+        return images.take(3)
     }
 }
