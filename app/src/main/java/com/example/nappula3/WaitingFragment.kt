@@ -18,8 +18,7 @@ class WaitingFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_wait, container, false)
         statusText = view.findViewById(R.id.statusText)
-        statusText.text = "Waiting for game to start..."
+        statusText.text = getString(R.string.waiting_status)
         return view
     }
 }
-

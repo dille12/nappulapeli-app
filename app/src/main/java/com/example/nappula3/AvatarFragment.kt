@@ -129,20 +129,20 @@ class AvatarFragment : Fragment() {
 
     private fun showInfoDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Avatar-ohje")
-            .setMessage("Optimaalissa kuvassa näkyy naama, ja ylävartalo. Vain YKSI naama näkyvillä. Naaman tulisi olla hieman kulmassa, että se osoittaa jompaankumpaan suuntaan semiselkeästi. Kääntönappulalla naama tulee sitten kääntää katsomaan vasemmalle. We stay winning.")
-            .setPositiveButton("OK") { _, _ -> }
+            .setTitle(getString(R.string.avatar_info_title))
+            .setMessage(getString(R.string.avatar_info_message))
+            .setPositiveButton(getString(R.string.common_ok)) { _, _ -> }
             .show()
     }
 
     private fun showDirectionConfirmDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Avatar Direction")
-            .setMessage("Please confirm that your avatar is facing left (←) for optimal gameplay experience.")
-            .setPositiveButton("Looks good") { _, _ ->
+            .setTitle(getString(R.string.avatar_direction_title))
+            .setMessage(getString(R.string.avatar_direction_message))
+            .setPositiveButton(getString(R.string.avatar_direction_positive)) { _, _ ->
                 proceedWithAvatar()
             }
-            .setNegativeButton("Let me adjust") { _, _ -> }
+            .setNegativeButton(getString(R.string.avatar_direction_negative)) { _, _ -> }
             .show()
     }
 

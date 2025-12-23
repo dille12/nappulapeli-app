@@ -40,13 +40,13 @@ class LevelUpFragment : Fragment() {
         val items = act.pendingLevelUpItems
         val pawn = act.pendingLevelUpPawn ?: act.playerName.orEmpty()
 
-        pawnNameLabel.text = "LEVEL UP!"
+        pawnNameLabel.text = getString(R.string.levelup_title)
         itemButtonsContainer.removeAllViews()
 
         // Check if we have items to show
         if (items.isEmpty()) {
             val noItemsText = TextView(requireContext()).apply {
-                text = "No level up options available"
+                text = getString(R.string.levelup_no_options)
                 textSize = 16f
                 setPadding(16, 16, 16, 16)
                 setTextColor(Color.GRAY)
