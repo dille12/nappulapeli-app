@@ -40,7 +40,7 @@ class StatsFragment : Fragment() {
         // Add stats dynamically
         if (playerStats.isEmpty()) {
             val noStatsText = TextView(requireContext()).apply {
-                text = "No stats available"
+                text = getString(R.string.stats_no_stats_available)
                 textSize = 16f
                 setPadding(16, 16, 16, 16)
             }
@@ -71,7 +71,7 @@ class StatsFragment : Fragment() {
         }
 
         val labelText = TextView(requireContext()).apply {
-            text = "$label:"
+            text = getString(R.string.stats_label_format, label)
             textSize = 16f
             layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         }
@@ -96,7 +96,7 @@ class StatsFragment : Fragment() {
 
             if (stats.isEmpty()) {
                 val noStatsText = TextView(requireContext()).apply {
-                    text = "No stats available"
+                    text = getString(R.string.stats_no_stats_available)
                     textSize = 16f
                     setPadding(16, 16, 16, 16)
                 }
