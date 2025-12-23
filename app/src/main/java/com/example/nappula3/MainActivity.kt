@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     var latestHudLines: List<Map<String, Any>> = listOf()
     var gamemodeInfo: String? = null
+    var equipmentImages: List<String> = emptyList()
 
     var webSocket: WebSocket? = null
     private val client = OkHttpClient()
@@ -457,6 +458,25 @@ class MainActivity : AppCompatActivity() {
                 val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
                 if (fragment is GameFragment) {
                     fragment.updateTeamColor(newColorInt)
+                }
+            }
+
+            "equipmentImages" -> {
+                val imagesArray = json.optJSONArray("images")
+                val images = mutableListOf<String>()
+                if (imagesArray != null) {
+                    for (i in 0 until imagesArray.length()) {
+                        val image = imagesArray.optString(i).trim()
+                        if (image.isNotEmpty()) {
+                            images.add(image)
+                        }
+                    }
+                }
+                equipmentImages = images
+
+                val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+                if (fragment is GameFragment) {
+                    fragment.updateEquipmentImages(images)
                 }
             }
 

@@ -26,6 +26,7 @@ class GameFragment : Fragment() {
     private lateinit var nameTextLabel: TextView
     private lateinit var levelText: TextView
     private lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var equipmentImageViews: List<ImageView>
 
     private lateinit var musicRequestFab: FloatingActionButton
 
@@ -44,6 +45,7 @@ class GameFragment : Fragment() {
     private var cachedPlayerStats: MutableMap<String, Any> = mutableMapOf()
     private var cachedBgColor: Int = Color.WHITE
     private var cachedGamemodeInfo: String? = null
+    private var cachedEquipmentImages: List<String> = emptyList()
 
     companion object {
         private const val ARG_BG_COLOR = "bgColor"
@@ -66,6 +68,7 @@ class GameFragment : Fragment() {
             cachedBase64Image = bundle.getString("cached_base64_image")
             cachedBgColor = bundle.getInt("cached_bg_color", Color.WHITE)
             cachedGamemodeInfo = bundle.getString("cached_gamemode_info")
+            cachedEquipmentImages = bundle.getStringArrayList("cached_equipment_images")?.toList() ?: emptyList()
 
             // Restore player stats
             val statsSize = bundle.getInt("stats_size", 0)
@@ -87,6 +90,7 @@ class GameFragment : Fragment() {
         outState.putString("cached_base64_image", cachedBase64Image)
         outState.putInt("cached_bg_color", cachedBgColor)
         outState.putString("cached_gamemode_info", cachedGamemodeInfo)
+        outState.putStringArrayList("cached_equipment_images", ArrayList(cachedEquipmentImages))
 
         // Save player stats
         outState.putInt("stats_size", cachedPlayerStats.size)
@@ -146,6 +150,11 @@ class GameFragment : Fragment() {
         levelText = view.findViewById(R.id.level)
         bottomNavigation = view.findViewById(R.id.bottom_navigation)
         musicRequestFab = view.findViewById(R.id.musicRequestFab)
+        equipmentImageViews = listOf(
+            view.findViewById(R.id.equipmentImage1),
+            view.findViewById(R.id.equipmentImage2),
+            view.findViewById(R.id.equipmentImage3)
+        )
 
         setupMusicRequestFab()
         setupBottomNavigation()
@@ -490,6 +499,7 @@ class GameFragment : Fragment() {
             cachedBase64Image = main.playerImageBase64 ?: cachedBase64Image
             cachedPlayerStats.putAll(main.playerStats)
             cachedGamemodeInfo = main.gamemodeInfo ?: cachedGamemodeInfo
+            cachedEquipmentImages = main.equipmentImages
         }
 
         // Get background color from arguments
@@ -517,6 +527,8 @@ class GameFragment : Fragment() {
         if (cachedPlayerStats.isNotEmpty()) {
             updateStatsDisplay(cachedPlayerStats)
         }
+
+        updateEquipmentImagesDisplay(cachedEquipmentImages)
     }
 
     @SuppressLint("SetTextI18n")
@@ -543,6 +555,11 @@ class GameFragment : Fragment() {
         statsFragment?.updateGamemodeInfo(info)
     }
 
+    fun updateEquipmentImages(images: List<String>) {
+        cachedEquipmentImages = images
+        updateEquipmentImagesDisplay(images)
+    }
+
     @SuppressLint("SetTextI18n")
     private fun updateStatsDisplay(playerStats: Map<String, Any>) {
         val level = playerStats["Level"]
@@ -551,6 +568,27 @@ class GameFragment : Fragment() {
 
         if (::levelText.isInitialized) {
             levelText.text = "LEVEL: $level XP: $xp / $xpToNextLevel"
+        }
+    }
+
+    private fun updateEquipmentImagesDisplay(images: List<String>) {
+        equipmentImageViews.forEachIndexed { index, imageView ->
+            val base64Image = images.getOrNull(index)
+            if (base64Image.isNullOrBlank()) {
+                imageView.setImageDrawable(null)
+                imageView.visibility = View.GONE
+                return@forEachIndexed
+            }
+
+            try {
+                val imageBytes: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                imageView.setImageBitmap(bitmap)
+                imageView.visibility = View.VISIBLE
+            } catch (e: Exception) {
+                imageView.setImageDrawable(null)
+                imageView.visibility = View.GONE
+            }
         }
     }
 
