@@ -581,27 +581,15 @@ class GameFragment : Fragment() {
                 return@forEachIndexed
             }
 
-            val bitmap = decodeBase64Bitmap(base64Image)
-            if (bitmap != null) {
+            try {
+                val imageBytes: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                 imageView.setImageBitmap(bitmap)
                 imageView.visibility = View.VISIBLE
-            } else {
+            } catch (e: Exception) {
                 imageView.setImageDrawable(null)
                 imageView.visibility = View.GONE
             }
-        }
-    }
-
-    private fun decodeBase64Bitmap(base64Image: String): Bitmap? {
-        val normalized = base64Image.substringAfter("base64,", base64Image).trim()
-        if (normalized.isBlank() || normalized.startsWith("http")) {
-            return null
-        }
-        return try {
-            val imageBytes: ByteArray = Base64.decode(normalized, Base64.DEFAULT)
-            BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        } catch (e: Exception) {
-            null
         }
     }
 

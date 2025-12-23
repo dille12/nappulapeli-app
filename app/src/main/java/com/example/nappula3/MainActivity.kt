@@ -461,8 +461,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            "equipmentImages", "equipmentUpdate", "equipment" -> {
-                val images = parseEquipmentImages(json)
+            "equipmentImages" -> {
+                val imagesArray = json.optJSONArray("images")
+                val images = mutableListOf<String>()
+                if (imagesArray != null) {
+                    for (i in 0 until imagesArray.length()) {
+                        val image = imagesArray.optString(i).trim()
+                        if (image.isNotEmpty()) {
+                            images.add(image)
+                        }
+                    }
+                }
                 equipmentImages = images
 
                 val fragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
