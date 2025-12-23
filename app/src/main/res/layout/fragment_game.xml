@@ -52,28 +52,32 @@
 
                 <ImageView
                     android:id="@+id/equipmentImage1"
-                    android:layout_width="20dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_marginEnd="4dp"
                     android:contentDescription="@null"
-                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/equipmentImage2"
-                    android:layout_width="20dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:layout_marginEnd="4dp"
                     android:contentDescription="@null"
-                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     android:visibility="gone" />
 
                 <ImageView
                     android:id="@+id/equipmentImage3"
-                    android:layout_width="20dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="20dp"
+                    android:layout_marginEnd="4dp"
                     android:contentDescription="@null"
-                    android:scaleType="centerCrop"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
                     android:visibility="gone" />
 
             </LinearLayout>
