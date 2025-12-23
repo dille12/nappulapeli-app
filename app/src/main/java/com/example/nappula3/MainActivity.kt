@@ -524,4 +524,35 @@ class MainActivity : AppCompatActivity() {
             else -> null
         }
     }
+
+    private fun parseEquipmentImages(json: JSONObject): List<String> {
+        val images = mutableListOf<String>()
+        val imagesArray = json.optJSONArray("images")
+        if (imagesArray != null) {
+            for (i in 0 until imagesArray.length()) {
+                val item = imagesArray.opt(i)
+                val image = when (item) {
+                    is String -> item
+                    is JSONObject -> item.optString("image")
+                    else -> ""
+                }.trim()
+                if (image.isNotEmpty()) {
+                    images.add(image)
+                }
+            }
+        }
+
+        if (images.isEmpty()) {
+            val weapon = json.optString("weapon", "").trim()
+            val dualWield = json.optString("dualWield", "").trim()
+            val grenade = json.optString("grenade", "").trim()
+            listOf(weapon, dualWield, grenade).forEach { image ->
+                if (image.isNotEmpty()) {
+                    images.add(image)
+                }
+            }
+        }
+
+        return images.take(3)
+    }
 }
