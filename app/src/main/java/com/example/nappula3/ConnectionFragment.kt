@@ -78,7 +78,7 @@ class ConnectionFragment : Fragment() {
         // Retry button simply reconnects
         retryButton.setOnClickListener {
             retryButton.visibility = View.GONE
-            statusText.text = "Reconnecting..."
+            statusText.text = getString(R.string.connection_reconnecting)
             connectWithCurrentIp(main)
         }
 
@@ -91,7 +91,7 @@ class ConnectionFragment : Fragment() {
         main?.latestIp = ip
         if (ip.isBlank()) {
             Log.w("WS", "Skipping connect: IP is blank")
-            statusText.text = "Enter the server IP to connect"
+            statusText.text = getString(R.string.connection_enter_ip)
             nextButton.isEnabled = false
             retryButton.visibility = View.VISIBLE
             return
@@ -114,13 +114,13 @@ class ConnectionFragment : Fragment() {
 
     // Called by MainActivity when connection succeeds
     fun onConnected() {
-        statusText.text = "Connected!"
+        statusText.text = getString(R.string.connection_connected)
         nextButton.isEnabled = true
     }
 
     // Called by MainActivity when connection fails
     fun onConnectionFailed() {
-        statusText.text = "Connection failed"
+        statusText.text = getString(R.string.connection_failed)
         nextButton.isEnabled = false
         retryButton.visibility = View.VISIBLE
     }

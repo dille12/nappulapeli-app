@@ -89,7 +89,7 @@ class ShopFragment : Fragment() {
         if (!isAdded) return
 
         // Update currency display
-        currencyText.text = "💰 $currentCurrency Drinks"
+        currencyText.text = getString(R.string.shop_currency_format, currentCurrency)
 
         // Setup register drinks button
         setupRegisterDrinksButton()
@@ -113,14 +113,10 @@ class ShopFragment : Fragment() {
     private fun showDrinkRegistrationDialog() {
         if (!isAdded) return
 
-        val options = arrayOf(
-            "🍺 330ml Drink (+100 drinks)",
-            "🍺 500ml Drink (+150 drinks)",
-            "🥃 Shot (+200 drinks)"
-        )
+        val options = resources.getStringArray(R.array.drink_options)
 
         val builder = android.app.AlertDialog.Builder(requireContext())
-        builder.setTitle("Register Your Drink")
+        builder.setTitle(getString(R.string.shop_register_title))
         builder.setItems(options) { _, which ->
             when (which) {
                 0 -> requestDrinkRegistration("330ml", 100)
@@ -128,7 +124,7 @@ class ShopFragment : Fragment() {
                 2 -> requestDrinkRegistration("shot", 200)
             }
         }
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton(getString(R.string.common_cancel), null)
         builder.show()
     }
 
@@ -146,7 +142,7 @@ class ShopFragment : Fragment() {
 
     private fun setupNextWeapon() {
         nextWeapon?.let { weapon ->
-            val name = weapon["name"] as? String ?: "Unknown Weapon"
+            val name = weapon["name"] as? String ?: getString(R.string.shop_unknown_weapon)
             val price = weapon["price"] as? Int ?: 0
             val imageBase64 = weapon["image"] as? String
             val description = weapon["description"] as? String ?: ""
@@ -169,7 +165,7 @@ class ShopFragment : Fragment() {
 
             val isOwned = (weapon["owned"] as? Boolean) == true
             nextWeaponButton.text = if (isOwned) {
-                "OWNED"
+                getString(R.string.shop_owned)
             } else {
                 buildItemText(name, price, description)
             }
@@ -193,14 +189,14 @@ class ShopFragment : Fragment() {
 
         } ?: run {
             // No next weapon available
-            nextWeaponButton.text = "All Weapons Unlocked!"
+            nextWeaponButton.text = getString(R.string.shop_all_weapons_unlocked)
             nextWeaponButton.isEnabled = false
             nextWeaponButton.alpha = 0.6f
         }
     }
 
     private fun setupRerollButton() {
-        rerollWeaponButton.text = "🎲 Reroll Weapon (💰 $rerollCost Drinks)"
+        rerollWeaponButton.text = getString(R.string.shop_reroll_weapon_format, rerollCost)
 
         // Enable/disable based on affordability and weapon availability
         val canAfford = currentCurrency >= rerollCost
@@ -224,7 +220,7 @@ class ShopFragment : Fragment() {
 
         if (shopItems.isEmpty()) {
             val emptyText = TextView(requireContext()).apply {
-                text = "No items available"
+                text = getString(R.string.shop_no_items_available)
                 textSize = 16f
                 setTextColor(Color.WHITE)
                 gravity = android.view.Gravity.CENTER
@@ -262,7 +258,7 @@ class ShopFragment : Fragment() {
     }
 
     private fun createItemButton(item: Map<String, Any?>, isLeftColumn: Boolean): MaterialButton {
-        val name = item["name"] as? String ?: "Unknown Item"
+        val name = item["name"] as? String ?: getString(R.string.shop_unknown_item)
         val price = item["price"] as? Int ?: 0
         val imageBase64 = (item["image"] as? String)?.takeIf { it.isNotBlank() }
         val description = item["description"] as? String ?: ""
@@ -305,7 +301,7 @@ class ShopFragment : Fragment() {
 
         val isOwned = (item["owned"] as? Boolean) == true
         val canAfford = currentCurrency >= price && !isOwned
-        button.text = if (isOwned) "OWNED" else buildItemText(name, price, description)
+        button.text = if (isOwned) getString(R.string.shop_owned) else buildItemText(name, price, description)
         button.isEnabled = canAfford
         button.alpha = if (canAfford) 1.0f else 0.6f
 
@@ -417,7 +413,8 @@ class ShopFragment : Fragment() {
         val text = SpannableString(
             buildString {
                 append(name)
-                append("\n💰 $price Drinks")
+                append("\n")
+                append(getString(R.string.shop_item_price_format, price))
                 if (description.isNotBlank()) {
                     append("\n")
                     append(description)
@@ -500,7 +497,7 @@ class ShopFragment : Fragment() {
         if (!isAdded) return
 
         this.currentCurrency = newCurrency
-        currencyText.text = "💰 $newCurrency Drinks"
+        currencyText.text = getString(R.string.shop_currency_format, newCurrency)
 
         // Update affordability of items
         populateShop()

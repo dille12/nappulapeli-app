@@ -87,7 +87,7 @@ class HUDFragment : Fragment() {
     private fun createRivalryCard(): CardView {
         // Double-check we're still attached
         if (!isAdded) {
-            throw IllegalStateException("Fragment not attached when creating rivalry card")
+            throw IllegalStateException(getString(R.string.hud_fragment_not_attached))
         }
 
         val cardView = CardView(requireContext()).apply {
@@ -109,7 +109,7 @@ class HUDFragment : Fragment() {
 
         // Title for rivalry section
         val rivalryTitle = TextView(requireContext()).apply {
-            text = "🎯 Kill Statistics"
+            text = getString(R.string.hud_kill_statistics_title)
             textSize = 18f
             setTextColor(Color.WHITE)
             textAlignment = TextView.TEXT_ALIGNMENT_CENTER
@@ -125,8 +125,8 @@ class HUDFragment : Fragment() {
         // Create nemesis row if available
         nemesisData?.let { nemesis ->
             val nemesisRow = createRivalryRow(
-                "💀 Most killed by:",
-                nemesis["name"] as? String ?: "Unknown",
+                getString(R.string.hud_most_killed_by_label),
+                nemesis["name"] as? String ?: getString(R.string.common_unknown),
                 nemesis["image"] as? String,
                 nemesis["kills"] as? Int ?: 0,
                 Color.rgb(255, 100, 100) // Light red for nemesis
@@ -137,8 +137,8 @@ class HUDFragment : Fragment() {
         // Create victim row if available
         victimData?.let { victim ->
             val victimRow = createRivalryRow(
-                "🏆 Most killed:",
-                victim["name"] as? String ?: "Unknown",
+                getString(R.string.hud_most_killed_label),
+                victim["name"] as? String ?: getString(R.string.common_unknown),
                 victim["image"] as? String,
                 victim["kills"] as? Int ?: 0,
                 Color.rgb(100, 255, 100) // Light green for victim
@@ -217,7 +217,7 @@ class HUDFragment : Fragment() {
         }
 
         val killText = TextView(requireContext()).apply {
-            text = "$killCount kills"
+            text = getString(R.string.hud_kill_count_format, killCount)
             textSize = 13f  // Slightly larger
             setTextColor(Color.LTGRAY)
         }
@@ -246,7 +246,7 @@ class HUDFragment : Fragment() {
         }
 
         val titleText = TextView(requireContext()).apply {
-            text = "⚡ Active Buffs & Effects"
+            text = getString(R.string.hud_active_buffs_title)
             textSize = 18f
             setTextColor(Color.WHITE)
             setPadding(20, 16, 20, 16)
@@ -300,7 +300,7 @@ class HUDFragment : Fragment() {
 
         // Create index/priority indicator
         val indexView = TextView(requireContext()).apply {
-            this.text = "#${index + 1}"
+            this.text = getString(R.string.hud_priority_format, index + 1)
             textSize = 12f
             setTextColor(Color.LTGRAY)
             setPadding(8, 4, 8, 4)
@@ -350,7 +350,7 @@ class HUDFragment : Fragment() {
         }
 
         val emptyIcon = TextView(requireContext()).apply {
-            text = "📊"
+            text = getString(R.string.hud_empty_icon)
             textSize = 48f
             textAlignment = TextView.TEXT_ALIGNMENT_CENTER
             layoutParams = LinearLayout.LayoutParams(
@@ -362,14 +362,14 @@ class HUDFragment : Fragment() {
         }
 
         val emptyText = TextView(requireContext()).apply {
-            text = "No active buffs or effects"
+            text = getString(R.string.hud_no_active_buffs)
             textSize = 16f
             setTextColor(Color.WHITE) // White text
             textAlignment = TextView.TEXT_ALIGNMENT_CENTER
         }
 
         val emptySubtext = TextView(requireContext()).apply {
-            text = "Level up to gain powerful abilities!"
+            text = getString(R.string.hud_level_up_hint)
             textSize = 14f
             setTextColor(Color.LTGRAY)
             textAlignment = TextView.TEXT_ALIGNMENT_CENTER

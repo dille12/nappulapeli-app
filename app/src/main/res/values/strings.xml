@@ -6,6 +6,68 @@
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_ok">OK</string>
+    <string name="common_unknown">Unknown</string>
+
+    <string name="stats_no_stats_available">No stats available</string>
+    <string name="stats_label_format">%1$s:</string>
+
+    <string name="connection_reconnecting">Reconnecting...</string>
+    <string name="connection_enter_ip">Enter the server IP to connect</string>
+    <string name="connection_connected">Connected!</string>
+    <string name="connection_failed">Connection failed</string>
+
+    <string name="hud_kill_statistics_title">🎯 Kill Statistics</string>
+    <string name="hud_most_killed_by_label">💀 Most killed by:</string>
+    <string name="hud_most_killed_label">🏆 Most killed:</string>
+    <string name="hud_fragment_not_attached">Fragment not attached when creating rivalry card</string>
+    <string name="hud_kill_count_format">%1$d kills</string>
+    <string name="hud_active_buffs_title">⚡ Active Buffs &amp; Effects</string>
+    <string name="hud_priority_format">#%1$d</string>
+    <string name="hud_empty_icon">📊</string>
+    <string name="hud_no_active_buffs">No active buffs or effects</string>
+    <string name="hud_level_up_hint">Level up to gain powerful abilities!</string>
+
+    <string name="game_youtube_link_hint">Paste YouTube link here...</string>
+    <string name="game_request_song_title">🎵 Request Song</string>
+    <string name="game_request_song_message">Add a song to the game playlist!</string>
+    <string name="game_request_song_confirm">Add to Playlist</string>
+    <string name="game_request_song_invalid">❌ Please enter a valid YouTube link</string>
+    <string name="game_request_song_added">🎵 Video added to playlist!</string>
+    <string name="game_purchase_success">✅ Purchased %1$s!</string>
+    <string name="game_request_failure">❌ %1$s</string>
+    <string name="game_reroll_success">🎲 Rerolled %1$s!</string>
+    <string name="game_drink_success">🍺 Registered %1$s (+%2$d drinks)!</string>
+    <string name="game_level_format">LEVEL: %1$s XP: %2$s / %3$s</string>
+
+    <string name="waiting_status">Waiting for game to start...</string>
+
+    <string name="levelup_title">LEVEL UP!</string>
+    <string name="levelup_no_options">No level up options available</string>
+
+    <string name="avatar_info_title">Avatar-ohje</string>
+    <string name="avatar_info_message">Optimaalissa kuvassa näkyy naama, ja ylävartalo. Vain YKSI naama näkyvillä. Naaman tulisi olla hieman kulmassa, että se osoittaa jompaankumpaan suuntaan semiselkeästi. Kääntönappulalla naama tulee sitten kääntää katsomaan vasemmalle. We stay winning.</string>
+    <string name="avatar_direction_title">Avatar Direction</string>
+    <string name="avatar_direction_message">Please confirm that your avatar is facing left (←) for optimal gameplay experience.</string>
+    <string name="avatar_direction_positive">Looks good</string>
+    <string name="avatar_direction_negative">Let me adjust</string>
+
+    <string name="shop_currency_format">💰 %1$d Drinks</string>
+    <string name="shop_register_title">Register Your Drink</string>
+    <string name="shop_unknown_weapon">Unknown Weapon</string>
+    <string name="shop_unknown_item">Unknown Item</string>
+    <string name="shop_owned">OWNED</string>
+    <string name="shop_all_weapons_unlocked">All Weapons Unlocked!</string>
+    <string name="shop_reroll_weapon_format">🎲 Reroll Weapon (💰 %1$d Drinks)</string>
+    <string name="shop_no_items_available">No items available</string>
+    <string name="shop_item_price_format">💰 %1$d Drinks</string>
+
+    <string-array name="drink_options">
+        <item>🍺 330ml Drink (+100 drinks)</item>
+        <item>🍺 500ml Drink (+150 drinks)</item>
+        <item>🥃 Shot (+200 drinks)</item>
+    </string-array>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

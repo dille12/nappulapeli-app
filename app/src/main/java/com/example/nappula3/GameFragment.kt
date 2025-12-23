@@ -207,28 +207,28 @@ class GameFragment : Fragment() {
         if (!isAdded) return
 
         val editText = EditText(requireContext()).apply {
-            hint = "Paste YouTube link here..."
+            hint = getString(R.string.game_youtube_link_hint)
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
             setPadding(48, 48, 48, 48)
         }
 
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("🎵 Request Song")
-        builder.setMessage("Add a song to the game playlist!")
+        builder.setTitle(getString(R.string.game_request_song_title))
+        builder.setMessage(getString(R.string.game_request_song_message))
         builder.setView(editText)
 
-        builder.setPositiveButton("Add to Playlist") { _, _ ->
+        builder.setPositiveButton(getString(R.string.game_request_song_confirm)) { _, _ ->
             val youtubeLink = editText.text.toString().trim()
             if (youtubeLink.isNotEmpty()) {
                 if (isValidYouTubeLink(youtubeLink)) {
                     requestSongAddition(youtubeLink)
                 } else {
-                    Toast.makeText(requireContext(), "❌ Please enter a valid YouTube link", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.game_request_song_invalid), Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        builder.setNegativeButton("Cancel", null)
+        builder.setNegativeButton(getString(R.string.common_cancel), null)
         builder.show()
     }
 
@@ -244,10 +244,10 @@ class GameFragment : Fragment() {
         val json = JSONObject()
             .put("type", "musicRequest")
             .put("youtubeLink", cleanedLink)
-            .put("pawnName", main.playerName ?: "Unknown")
+            .put("pawnName", main.playerName ?: getString(R.string.common_unknown))
 
         main.sendJson(json.toString())
-        Toast.makeText(requireContext(), "🎵 Video added to playlist!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.game_request_song_added), Toast.LENGTH_SHORT).show()
         android.util.Log.d("GameFragment", "Requested video addition: $cleanedLink")
     }
 
@@ -385,9 +385,9 @@ class GameFragment : Fragment() {
         if (isAdded) {
             // Show a brief message to user
             val messageText = if (success) {
-                "✅ Purchased $itemName!"
+                getString(R.string.game_purchase_success, itemName)
             } else {
-                "❌ $message"
+                getString(R.string.game_request_failure, message)
             }
 
             Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
@@ -407,9 +407,9 @@ class GameFragment : Fragment() {
         if (isAdded) {
             // Show a brief message to user
             val messageText = if (success) {
-                "🎲 Rerolled $rerollType!"
+                getString(R.string.game_reroll_success, rerollType)
             } else {
-                "❌ $message"
+                getString(R.string.game_request_failure, message)
             }
 
             Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
@@ -428,9 +428,9 @@ class GameFragment : Fragment() {
         if (isAdded) {
             // Show a brief message to user
             val messageText = if (success) {
-                "🍺 Registered $drinkType (+$drinkValue drinks)!"
+                getString(R.string.game_drink_success, drinkType, drinkValue)
             } else {
-                "❌ $message"
+                getString(R.string.game_request_failure, message)
             }
 
             Toast.makeText(requireContext(), messageText, Toast.LENGTH_SHORT).show()
@@ -513,7 +513,7 @@ class GameFragment : Fragment() {
         // Apply background color to the main container
         view?.setBackgroundColor(cachedBgColor)
 
-        nameTextLabel.text = cachedPlayerName ?: "Unknown"
+        nameTextLabel.text = cachedPlayerName ?: getString(R.string.common_unknown)
 
         cachedBase64Image?.let { base64Image ->
             try {
@@ -568,7 +568,7 @@ class GameFragment : Fragment() {
         val xpToNextLevel = playerStats["XP to next level"]
 
         if (::levelText.isInitialized) {
-            levelText.text = "LEVEL: $level XP: $xp / $xpToNextLevel"
+            levelText.text = getString(R.string.game_level_format, level, xp, xpToNextLevel)
         }
     }
 
