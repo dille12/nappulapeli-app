@@ -53,7 +53,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🔫 Next Weapon"
+            android:text="🔫 Asevalikoima"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -78,7 +78,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="🛒 Items"
+            android:text="🛒 Extrasälää"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"

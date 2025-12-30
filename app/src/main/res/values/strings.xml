@@ -47,7 +47,7 @@
     <string name="levelup_no_options">Ei esineitä saatavilla, joku bugi.</string>
 
     <string name="avatar_info_title">Avatar-ohje</string>
-    <string name="avatar_info_message">Optimaalissa kuvassa näkyy naama, ja ylävartalo. Vain YKSI naama näkyvillä. Naaman tulisi olla hieman kulmassa, että se osoittaa jompaankumpaan suuntaan semiselkeästi. Kääntönappulalla naama tulee sitten kääntää katsomaan vasemmalle. We stay winning.</string>
+    <string name="avatar_info_message">Optimaalissa kuvassa näkyy naama, ja ylävartalo. Mieluiten selvie. Vain YKSI naama näkyvillä. Naaman tulisi olla hieman kulmassa, että se osoittaa jompaankumpaan suuntaan semiselkeästi. Kääntönappulalla naama tulee sitten kääntää katsomaan vasemmalle. We stay winning.</string>
     <string name="avatar_direction_title">Avatarin orientaatio</string>
     <string name="avatar_direction_message">Kato ny et se kuva kattoo vasemmalle (←) tai oot megapässi.</string>
     <string name="avatar_direction_positive">Hyvält näyttää</string>

@@ -6,17 +6,22 @@
         android:title="HUD" />
 
     <item
-        android:id="@+id/nav_levelup"
-        android:icon="@drawable/star_24px"
-        android:title="Level Up" />
-
-    <item
         android:id="@+id/nav_shop"
         android:icon="@drawable/shopping_cart_24px"
         android:title="Shop" />
 
     <item
+        android:id="@+id/nav_levelup"
+        android:icon="@drawable/star_24px"
+        android:title="Level Up" />
+
+    <item
         android:id="@+id/nav_stats"
         android:icon="@drawable/timeline_24px"
         android:title="Stats" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/settings"
+        android:title="Settings" />
 </menu>

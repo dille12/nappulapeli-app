@@ -187,6 +187,10 @@ class GameFragment : Fragment() {
                     showStatsFragment()
                     true
                 }
+                R.id.nav_settings -> {
+
+                    true
+                }
                 else -> false
             }
         }
@@ -442,6 +446,9 @@ class GameFragment : Fragment() {
         }
     }
 
+    fun throwToastMessage(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    }
     private fun showTeamSwitchEffect() {
         // Add a brief flash effect or animation to make the team switch more noticeable
         view?.animate()
@@ -481,8 +488,9 @@ class GameFragment : Fragment() {
             badge.isVisible = true
             badge.backgroundColor = Color.RED
             badge.badgeTextColor = Color.WHITE
+            badge.text = "LEVEL UP"
             // Empty badge (just a dot)
-            badge.clearNumber()
+            // badge.clearNumber()
         }
     }
 

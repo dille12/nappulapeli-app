@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:text="Suit up your avatar"
+                android:text="Valitse avatari"
                 android:textColor="@color/avatar_blue"
                 android:textSize="20sp"
                 android:textStyle="bold"
@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Enter your name and select an avatar:"
+                android:text="Syötä nimi ja kuva jolla pelaat:"
                 android:textAlignment="center"
                 android:textColor="@color/avatar_blue"
                 android:textSize="16sp"
@@ -56,7 +56,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Player Name"
+                android:hint="Pelaajanimi"
                 app:boxBackgroundMode="filled"
                 app:boxBackgroundColor="@color/black"
                 app:boxCornerRadiusTopStart="12dp"
@@ -90,7 +90,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:entries="@array/avatar_team_options"
-                android:padding="8dp" />
+                android:background="@color/avatar_blue"
+                android:popupBackground="@color/avatar_blue"
+                android:padding="8dp"/>
+
+
+
+
 
             <ImageView
                 android:id="@+id/avatarImage"
@@ -128,7 +134,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:backgroundTint="@color/avatar_blue"
-                    android:text="Select Image"
+                    android:text="Valitse kuva"
                     android:textColor="@color/white" />
 
                 <Button
@@ -156,7 +162,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/avatar_blue"
                     android:enabled="false"
-                    android:text="Flip"
+                    android:text="Peilaa"
                     android:textColor="@color/white" />
 
                 <Button
@@ -166,7 +172,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/avatar_blue"
                     android:enabled="false"
-                    android:text="Next"
+                    android:text="Seuraava"
                     android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>

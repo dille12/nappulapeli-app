@@ -12,7 +12,7 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.json.JSONObject
 import androidx.activity.OnBackPressedCallback
-
+import androidx.core.content.ContentProviderCompat.requireContext
 
 
 class MainActivity : AppCompatActivity() {
@@ -234,6 +234,20 @@ class MainActivity : AppCompatActivity() {
                         .applyFadeAnimations()
                         .replace(R.id.fragment_container, fragment)
                         .commit()
+                }
+            }
+
+            "avatarSuccess" -> {
+                val success = json.optBoolean("state")
+                if (success) {
+                    supportFragmentManager.beginTransaction()
+                        .applyFadeAnimations()
+                        .replace(R.id.fragment_container, WaitingFragment())
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    val messageText = json.optString("info")
+                    Toast.makeText(this, messageText, Toast.LENGTH_SHORT).show()
                 }
             }
 

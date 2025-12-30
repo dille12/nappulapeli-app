@@ -11,7 +11,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Current gamemode"
+            android:text="Nykyinen pelimuoto"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
             android:paddingStart="16dp"
@@ -22,6 +23,7 @@
         <TextView
             android:id="@+id/gamemodeInfo"
             android:layout_width="match_parent"
+            android:textColor="@android:color/white"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:paddingStart="16dp"
@@ -32,7 +34,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Player Statistics"
+            android:text="STATSIT"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold"
             android:padding="16dp"
@@ -42,6 +45,7 @@
             android:id="@+id/statsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
             android:orientation="vertical" />
 
     </LinearLayout>

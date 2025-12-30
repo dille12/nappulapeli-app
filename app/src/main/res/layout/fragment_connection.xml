@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Connect to your arena"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 tools:ignore="HardcodedText" />
@@ -75,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="@color/white"
+                    android:textColor="@color/black"
                     android:textColorHint="@color/white" />
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -21,6 +21,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.core.widget.doOnTextChanged
 import android.util.Base64
+import android.widget.ArrayAdapter
 import java.io.ByteArrayOutputStream
 
 class AvatarFragment : Fragment() {
@@ -56,6 +57,8 @@ class AvatarFragment : Fragment() {
         infoButton = view.findViewById(R.id.infoButton)
         teamSpinner = view.findViewById(R.id.teamSpinner)
 
+
+
         nextButton.isEnabled = false
         flipButton.isEnabled = false
 
@@ -86,6 +89,18 @@ class AvatarFragment : Fragment() {
         } 
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.avatar_team_options,
+            R.layout.spinner_item
+        )
+        adapter.setDropDownViewResource(R.layout.spinner_item)
+        teamSpinner.adapter = adapter
     }
 
     private fun preloadSavedAvatar() {
@@ -180,11 +195,7 @@ class AvatarFragment : Fragment() {
 
         (activity as? MainActivity)?.sendJson(json)
 
-        parentFragmentManager.beginTransaction()
-            .applyFadeAnimations()
-            .replace(R.id.fragment_container, WaitingFragment())
-            .addToBackStack(null)
-            .commit()
+
     }
 
     private fun flipBitmap(bitmap: Bitmap): Bitmap {

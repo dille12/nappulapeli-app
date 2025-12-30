@@ -1,5 +1,6 @@
 package com.example.nappula3
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +43,7 @@ class StatsFragment : Fragment() {
             val noStatsText = TextView(requireContext()).apply {
                 text = getString(R.string.stats_no_stats_available)
                 textSize = 16f
+                setTextColor(Color.WHITE)
                 setPadding(16, 16, 16, 16)
             }
             statsContainer.addView(noStatsText)
@@ -73,12 +75,14 @@ class StatsFragment : Fragment() {
         val labelText = TextView(requireContext()).apply {
             text = getString(R.string.stats_label_format, label)
             textSize = 16f
+            setTextColor(Color.WHITE)
             layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         }
 
         val valueText = TextView(requireContext()).apply {
             text = value
             textSize = 16f
+            setTextColor(Color.WHITE)
             textAlignment = TextView.TEXT_ALIGNMENT_TEXT_END
         }
 
