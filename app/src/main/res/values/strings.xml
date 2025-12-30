@@ -49,7 +49,7 @@
     <string name="settings_team_name_hint">New team name</string>
     <string name="settings_team_name_sent">✅ Team name switch sent!</string>
 
-    <string name="waiting_status">Ootellaan ku peli alkaa...</string>
+    <string name="waiting_status">Servu kokkaa kuvaas...</string>
 
     <string name="levelup_title">LEVEL UP!</string>
     <string name="levelup_no_options">Ei esineitä saatavilla, joku bugi.</string>
