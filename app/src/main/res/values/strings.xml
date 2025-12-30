@@ -41,6 +41,14 @@
     <string name="game_drink_success">🍺 Rekisteröity %1$s (+%2$d pistettä)!</string>
     <string name="game_level_format">LEVEL: %1$s XP: %2$s / %3$s</string>
 
+    <string name="settings_title">Settings</string>
+    <string name="settings_switch_team_name_button">Switch team name</string>
+    <string name="settings_switch_team_name_description">Change the team name for your player.</string>
+    <string name="settings_switch_team_name_title">Switch team name</string>
+    <string name="settings_switch_team_name_message">Enter a new team name.</string>
+    <string name="settings_team_name_hint">New team name</string>
+    <string name="settings_team_name_sent">✅ Team name switch sent!</string>
+
     <string name="waiting_status">Ootellaan ku peli alkaa...</string>
 
     <string name="levelup_title">LEVEL UP!</string>
