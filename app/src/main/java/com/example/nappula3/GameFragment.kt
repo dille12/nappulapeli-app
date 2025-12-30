@@ -76,9 +76,19 @@ class GameFragment : Fragment() {
             val statsSize = bundle.getInt("stats_size", 0)
             for (i in 0 until statsSize) {
                 val key = bundle.getString("stats_key_$i")
-                val value = bundle.getInt("stats_value_$i")
+                val type = bundle.getString("stats_type_$i")
                 if (key != null) {
-                    cachedPlayerStats[key] = value
+                    val value: Any? = when (type) {
+                        "int" -> bundle.getInt("stats_value_$i")
+                        "long" -> bundle.getLong("stats_value_$i")
+                        "float" -> bundle.getFloat("stats_value_$i")
+                        "double" -> bundle.getDouble("stats_value_$i")
+                        "string" -> bundle.getString("stats_value_$i")
+                        else -> null
+                    }
+                    if (value != null) {
+                        cachedPlayerStats[key] = value
+                    }
                 }
             }
         }
@@ -98,7 +108,28 @@ class GameFragment : Fragment() {
         outState.putInt("stats_size", cachedPlayerStats.size)
         cachedPlayerStats.entries.forEachIndexed { index, entry ->
             outState.putString("stats_key_$index", entry.key)
-            outState.putInt("stats_value_$index", entry.value as Int)
+            when (val value = entry.value) {
+                is Int -> {
+                    outState.putString("stats_type_$index", "int")
+                    outState.putInt("stats_value_$index", value)
+                }
+                is Long -> {
+                    outState.putString("stats_type_$index", "long")
+                    outState.putLong("stats_value_$index", value)
+                }
+                is Float -> {
+                    outState.putString("stats_type_$index", "float")
+                    outState.putFloat("stats_value_$index", value)
+                }
+                is Double -> {
+                    outState.putString("stats_type_$index", "double")
+                    outState.putDouble("stats_value_$index", value)
+                }
+                is String -> {
+                    outState.putString("stats_type_$index", "string")
+                    outState.putString("stats_value_$index", value)
+                }
+            }
         }
     }
 
