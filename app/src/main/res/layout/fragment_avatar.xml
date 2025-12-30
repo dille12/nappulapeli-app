@@ -75,6 +75,23 @@
                     android:backgroundTint="@color/avatar_blue" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/teamLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/avatar_team_label"
+                android:textColor="@color/avatar_blue"
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/teamSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:entries="@array/avatar_team_options"
+                android:padding="8dp" />
+
             <ImageView
                 android:id="@+id/avatarImage"
                 android:layout_width="200dp"

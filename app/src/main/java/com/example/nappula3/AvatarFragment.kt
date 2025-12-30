@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.core.widget.doOnTextChanged
@@ -30,6 +31,7 @@ class AvatarFragment : Fragment() {
     private lateinit var flipButton: Button
     private lateinit var nextButton: Button
     private lateinit var directionText: TextView
+    private lateinit var teamSpinner: Spinner
 
     private lateinit var infoButton: Button
 
@@ -52,6 +54,7 @@ class AvatarFragment : Fragment() {
         nextButton = view.findViewById(R.id.nextButton)
         directionText = view.findViewById(R.id.directionText)
         infoButton = view.findViewById(R.id.infoButton)
+        teamSpinner = view.findViewById(R.id.teamSpinner)
 
         nextButton.isEnabled = false
         flipButton.isEnabled = false
@@ -89,6 +92,7 @@ class AvatarFragment : Fragment() {
         val prefs = requireActivity().getPreferences(Context.MODE_PRIVATE)
         val savedName = prefs.getString(MainActivity.KEY_PLAYER_NAME, null)
         val savedImage = prefs.getString(MainActivity.KEY_PLAYER_IMAGE, null)
+        val savedTeam = prefs.getInt(MainActivity.KEY_PLAYER_TEAM, -1)
 
         if (!savedName.isNullOrBlank()) {
             nameInput.setText(savedName)
@@ -108,6 +112,13 @@ class AvatarFragment : Fragment() {
             } catch (e: IllegalArgumentException) {
                 // Ignore invalid base64 data
             }
+        }
+
+        val teamSelection = savedTeam + 1
+        if (teamSelection in 0..4) {
+            teamSpinner.setSelection(teamSelection)
+        } else {
+            teamSpinner.setSelection(0)
         }
 
         checkNextEnabled()
@@ -149,19 +160,21 @@ class AvatarFragment : Fragment() {
     private fun proceedWithAvatar() {
         val name = nameInput.text.toString()
         val bitmap = displayBitmap ?: return
+        val team = teamSpinner.selectedItemPosition - 1
 
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val imageBytes = baos.toByteArray()
         val base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP)
 
-        (activity as? MainActivity)?.onAvatarSubmitted(name, base64Image)
+        (activity as? MainActivity)?.onAvatarSubmitted(name, base64Image, team)
 
         val json = """
         {
             "type": "avatar",
             "name": "$name",
-            "image": "$base64Image"
+            "image": "$base64Image",
+            "team": $team
         }
     """.trimIndent()
 

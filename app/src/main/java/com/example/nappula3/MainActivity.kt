@@ -21,12 +21,14 @@ class MainActivity : AppCompatActivity() {
         private const val KEY_LATEST_IP = "latest_ip"
         const val KEY_PLAYER_NAME = "player_name"
         const val KEY_PLAYER_IMAGE = "player_image"
+        const val KEY_PLAYER_TEAM = "player_team"
     }
 
     var playerName: String? = null
     var playerImageBase64: String? = null
     private var pendingAvatarName: String? = null
     private var pendingAvatarImageBase64: String? = null
+    private var pendingAvatarTeam: Int? = null
 
     val playerStats = mutableMapOf<String, Any>()
 
@@ -166,13 +168,15 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun onAvatarSubmitted(name: String, imageBase64: String) {
+    fun onAvatarSubmitted(name: String, imageBase64: String, team: Int) {
         pendingAvatarName = name
         pendingAvatarImageBase64 = imageBase64
+        pendingAvatarTeam = team
 
         getPreferences(MODE_PRIVATE).edit()
             .putString(KEY_PLAYER_NAME, pendingAvatarName)
             .putString(KEY_PLAYER_IMAGE, pendingAvatarImageBase64)
+            .putInt(KEY_PLAYER_TEAM, pendingAvatarTeam ?: -1)
             .apply()
     }
 
