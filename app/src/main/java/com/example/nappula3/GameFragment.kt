@@ -38,6 +38,7 @@ class GameFragment : Fragment() {
     private var levelUpFragment: LevelUpFragment? = null
     private var shopFragment: ShopFragment? = null
     private var statsFragment: StatsFragment? = null
+    private var settingsFragment: SettingsFragment? = null
     private var currentBottomFragment: Fragment? = null
 
     // Cache data to prevent loss on view recreation
@@ -137,6 +138,7 @@ class GameFragment : Fragment() {
         levelUpFragment = null
         shopFragment = null
         statsFragment = null
+        settingsFragment = null
         currentBottomFragment = null
     }
 
@@ -188,7 +190,7 @@ class GameFragment : Fragment() {
                     true
                 }
                 R.id.nav_settings -> {
-
+                    showSettingsFragment()
                     true
                 }
                 else -> false
@@ -346,6 +348,18 @@ class GameFragment : Fragment() {
         childFragmentManager.beginTransaction()
             .applyFadeAnimations()
             .replace(R.id.bottomPanelContainer, statsFragment!!)
+            .commit()
+    }
+
+    private fun showSettingsFragment() {
+        if (settingsFragment == null) {
+            settingsFragment = SettingsFragment()
+        }
+
+        currentBottomFragment = settingsFragment
+        childFragmentManager.beginTransaction()
+            .applyFadeAnimations()
+            .replace(R.id.bottomPanelContainer, settingsFragment!!)
             .commit()
     }
 
